@@ -19,11 +19,9 @@ import os.path
 import dateutil.parser
 from oslo.config import cfg
 
-from caso.extract import nova
-from caso import utils
-
-
 opts = [
+    cfg.StrOpt('site_name',
+               help='Site name as in GOCDB.'),
     cfg.ListOpt('tenants',
                 default=[],
                 help='List of tenants to extract accounting records from.'),
@@ -43,6 +41,10 @@ CONF = cfg.CONF
 
 CONF.register_opts(opts)
 CONF.register_cli_opts(cli_opts)
+
+# NOTE(aloga): this needs to be after the CONF part
+from caso.extract import nova
+from caso import utils
 
 
 class ExtractorManager(object):
