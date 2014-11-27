@@ -52,6 +52,9 @@ class CloudRecord(object):
         self.user_dn = user_dn
 
     def __repr__(self):
+        return pprint.pformat(self.as_dict())
+
+    def as_dict(self):
         d = {'VMUUID': self.uuid,
              'SiteName': self.site,
              'MachineName': self.name,
@@ -74,4 +77,4 @@ class CloudRecord(object):
              'ImageId': self.image_id,
              'CloudType': self.cloud_type,
              'GlobalUserName': self.user_dn, }
-        return pprint.pformat(d)
+        return d

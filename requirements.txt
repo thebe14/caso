@@ -4,3 +4,5 @@ oslo.config
 python-novaclient
 python-keystoneclient
 python-dateutil
+
+dirq

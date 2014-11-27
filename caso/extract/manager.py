@@ -51,12 +51,14 @@ CONF.register_cli_opts(cli_opts)
 
 # NOTE(aloga): this needs to be after the CONF part
 from caso.extract import nova
+import caso.ssm
 from caso import utils
 
 
 class ExtractorManager(object):
     def __init__(self):
         self.extractor = nova.OpenStackExtractor()
+        self.messanger = caso.ssm.SsmMessager()
         utils.makedirs(CONF.spooldir)
         self.last_run_file = os.path.join(CONF.spooldir, "lastrun")
 
@@ -86,5 +88,6 @@ class ExtractorManager(object):
                 print("Extracted %d records for tenant '%s' from %s to now" %
                       (len(records), tenant, lastrun))
             else:
+                self.messanger.push(records)
                 with open(self.last_run_file, "w") as fd:
                     fd.write(str(datetime.datetime.now()))
