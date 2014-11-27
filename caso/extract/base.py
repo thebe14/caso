@@ -14,8 +14,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import pbr.version
+import abc
 
 
-__version__ = pbr.version.VersionInfo(
-    'caso').version_string()
+class BaseExtractor(object):
+    __metaclass__ = abc.ABCMeta

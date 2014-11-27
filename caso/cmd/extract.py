@@ -14,8 +14,27 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import pbr.version
+import os
+import sys
+
+from oslo.config import cfg
+
+from caso.extract import manager
+import caso.config
+
+CONF = cfg.CONF
 
 
-__version__ = pbr.version.VersionInfo(
-    'caso').version_string()
+def main():
+#    default_config_files = ["/etc/caso.conf",
+#                            "etc/caso.conf",
+#                            os.path.expanduser('~/.caso.conf')]
+    default_config_files = []
+    caso.config.parse_args(sys.argv,
+                           default_config_files=default_config_files)
+    extractor = manager.ExtractorManager()
+    extractor.extract()
+
+
+if __name__ == "__main__":
+    main()

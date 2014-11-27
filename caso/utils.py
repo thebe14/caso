@@ -14,8 +14,23 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import pbr.version
+import errno
+import os
+import os.path
 
 
-__version__ = pbr.version.VersionInfo(
-    'caso').version_string()
+def makedirs(path):
+    """Recursive directory creation function.
+
+    If the directory exists it will not raise an exception.
+
+    :param path: Directory to create
+    """
+    try:
+        os.makedirs(path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST:
+            if not os.path.isdir(path):
+                raise
+        else:
+            raise

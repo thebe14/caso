@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = caso
+omit = caso/tests/*,caso/openstack/*
+
+[report]
+ignore-errors = True
