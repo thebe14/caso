@@ -14,6 +14,9 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+from __future__ import print_function
+
+import datetime
 import os.path
 
 import dateutil.parser
@@ -34,7 +37,11 @@ cli_opts = [
     cfg.StrOpt('extract_from',
                help='Extract records from this date. If it is not set, '
                'extract records from last run. If none are set, extract '
-               'records from the beginning of time.')
+               'records from the beginning of time.'),
+    cfg.BoolOpt('dry_run',
+                default=False,
+                help='Extract records but do not push records to SSM. This '
+                'will not update the last run date.'),
 ]
 
 CONF = cfg.CONF
@@ -74,5 +81,10 @@ class ExtractorManager(object):
         # FIXME(aloga): we should lock here
         lastrun = self.lastrun
         for tenant in CONF.tenants:
-            self.extractor.extract_for_tenant(tenant, lastrun)
-        # FIXME(aloga): save last run
+            records = self.extractor.extract_for_tenant(tenant, lastrun)
+            if CONF.dry_run:
+                print("Extracted %d records for tenant '%s' from %s to now" %
+                      (len(records), tenant, lastrun))
+            else:
+                with open(self.last_run_file, "w") as fd:
+                    fd.write(str(datetime.datetime.now()))

@@ -156,20 +156,22 @@ class OpenStackExtractor(base.BaseExtractor):
             records[server.id] = r
 
         for usage in usages:
-            if usage["instance_id"] in records:
-                instance_id = usage["instance_id"]
-                records[instance_id].memory = usage["memory_mb"]
-                records[instance_id].cpu_count = usage["vcpus"]
-                records[instance_id].disk = usage["local_gb"]
-                records[instance_id].cpu_duration = int(usage["hours"] * 3600)
+            if usage["instance_id"] not in records:
+                continue
+            instance_id = usage["instance_id"]
+            records[instance_id].memory = usage["memory_mb"]
+            records[instance_id].cpu_count = usage["vcpus"]
+            records[instance_id].disk = usage["local_gb"]
+            records[instance_id].cpu_duration = int(usage["hours"] * 3600)
 
-                started = dateutil.parser.parse(usage["started_at"])
-                records[instance_id].start_time = int(started.strftime("%s"))
-                if usage.get("ended_at", None) is not None:
-                    ended = dateutil.parser.parse(usage['ended_at'])
-                    records[instance_id].end_time = int(ended.strftime("%s"))
-                    wall = ended - started
-                else:
-                    wall = now - started
+            started = dateutil.parser.parse(usage["started_at"])
+            records[instance_id].start_time = int(started.strftime("%s"))
+            if usage.get("ended_at", None) is not None:
+                ended = dateutil.parser.parse(usage['ended_at'])
+                records[instance_id].end_time = int(ended.strftime("%s"))
+                wall = ended - started
+            else:
+                wall = now - started
 
-                records[instance_id].wall_duration = int(wall.total_seconds())
+            records[instance_id].wall_duration = int(wall.total_seconds())
+        return records
