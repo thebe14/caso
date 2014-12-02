@@ -21,6 +21,12 @@ import os.path
 
 import dateutil.parser
 from oslo.config import cfg
+from oslo.utils import importutils
+
+SUPPORTED_EXTRACTORS = {
+    'nova': 'caso.extract.nova.OpenStackExtractor',
+    'ceilometer': 'caso.extract.ceilometer.CeilometerExtractor',
+}
 
 opts = [
     cfg.StrOpt('site_name',
@@ -42,6 +48,13 @@ cli_opts = [
                 default=False,
                 help='Extract records but do not push records to SSM. This '
                 'will not update the last run date.'),
+    cfg.StrOpt('extractor',
+               choices=SUPPORTED_EXTRACTORS,
+               default='nova',
+               help=('Which extractor to use for getting the data. '
+                     'Only the following middlewares are supported: %s. '
+                     'If you do not specify anything, nova will be '
+                     'used.' % SUPPORTED_EXTRACTORS.keys())),
 ]
 
 CONF = cfg.CONF
@@ -50,14 +63,15 @@ CONF.register_opts(opts)
 CONF.register_cli_opts(cli_opts)
 
 # NOTE(aloga): this needs to be after the CONF part
-from caso.extract import nova
 import caso.ssm
 from caso import utils
 
 
 class ExtractorManager(object):
     def __init__(self):
-        self.extractor = nova.OpenStackExtractor()
+        extractor_class = importutils.import_class(
+            SUPPORTED_EXTRACTORS[CONF.extractor])
+        self.extractor = extractor_class()
         self.messanger = caso.ssm.SsmMessager()
         utils.makedirs(CONF.spooldir)
         self.last_run_file = os.path.join(CONF.spooldir, "lastrun")

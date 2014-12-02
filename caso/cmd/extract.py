@@ -19,8 +19,8 @@ import sys
 
 from oslo.config import cfg
 
-from caso.extract import manager
 import caso.config
+from caso.extract import manager
 
 CONF = cfg.CONF
 
