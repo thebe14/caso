@@ -124,7 +124,11 @@ class OpenStackExtractor(base.BaseExtractor):
         users = ks_conn.users.list(tenant_id=tenant_id)
         users = {u.id: u.username for u in users}
         servers = conn.servers.list(search_opts={"changes-since": lastrun})
-        usages = conn.usage.get(tenant_id, lastrun, end).server_usages
+
+        # FIXME(aloga): use start and end from the retreived servers
+        aux = conn.usage.get(tenant_id, lastrun, end)
+        usages = getattr(aux, "server_usages", [])
+
         images = conn.images.list()
         records = {}
 
