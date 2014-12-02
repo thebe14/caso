@@ -5,4 +5,8 @@ python-novaclient
 python-keystoneclient
 python-dateutil
 
+python-glanceclient
+python-ceilometerclient
+
+
 dirq
