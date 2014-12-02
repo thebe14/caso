@@ -16,6 +16,9 @@
 
 import abc
 
+import six
 
+
+@six.add_metaclass(abc.ABCMeta)
 class BaseExtractor(object):
-    __metaclass__ = abc.ABCMeta
+    pass
