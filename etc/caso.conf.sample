@@ -1,0 +1,61 @@
+[DEFAULT]
+
+#
+# Options defined in caso.extract.manager
+#
+
+# Extract records from this date. If it is not set, extract
+# records from last run. If none are set, extract records from
+# the beginning of time. (string value)
+#extract_from=<None>
+
+# Extract records but do not push records to SSM. This will
+# not update the last run date. (boolean value)
+#dry_run=false
+
+# Site name as in GOCDB. (string value)
+#site_name=<None>
+
+# List of tenants to extract accounting records from. (list
+# value)
+#tenants=
+
+# Spool directory. (string value)
+#spooldir=/var/spool/caso
+
+
+[nova]
+
+#
+# Options defined in caso.extract.nova
+#
+
+# User to authenticate as. (string value)
+#user=accounting
+
+# Password to authenticate with. (string value)
+#password=
+
+# Keystone endpoint to autenticate with. (string value)
+#endpoint=
+
+# Perform an insecure connection (i.e. do not verify the
+# server's certificate. DO NOT USE IN PRODUCTION (boolean
+# value)
+#insecure=false
+
+# File containing the VO <-> tenant mapping for image lists
+# private to VOs (string value)
+#mapping_file=/etc/caso/voms.json
+
+
+[ssm]
+
+#
+# Options defined in caso.ssm
+#
+
+# Directory to put the generated SSM records. (string value)
+#output_path=/var/spool/apel/outgoing/openstack
+
+
