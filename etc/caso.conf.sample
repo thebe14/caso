@@ -40,12 +40,12 @@
 #endpoint=
 
 # Perform an insecure connection (i.e. do not verify the
-# server's certificate. DO NOT USE IN PRODUCTION (boolean
+# server's certificate. DO NOT USE IN PRODUCTION. (boolean
 # value)
 #insecure=false
 
-# File containing the VO <-> tenant mapping for image lists
-# private to VOs (string value)
+# File containing the VO <-> tenant mapping as used in
+# Keystone-VOMS. (string value)
 #mapping_file=/etc/caso/voms.json
 
 

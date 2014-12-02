@@ -39,11 +39,11 @@ opts = [
                 default=False,
                 help='Perform an insecure connection (i.e. do '
                 'not verify the server\'s certificate. DO NOT USE '
-                'IN PRODUCTION'),
+                'IN PRODUCTION.'),
     cfg.StrOpt('mapping_file',
                default='/etc/caso/voms.json',
-               help='File containing the VO <-> tenant mapping for image '
-               'lists private to VOs'),
+               help='File containing the VO <-> tenant mapping as used '
+               'in Keystone-VOMS.'),
 ]
 
 CONF = cfg.CONF
