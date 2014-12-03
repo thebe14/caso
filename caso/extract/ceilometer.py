@@ -17,103 +17,32 @@
 from __future__ import print_function
 
 import datetime
-import json
 
 import ceilometerclient.client
 import dateutil.parser
 import glanceclient.client
-import keystoneclient.v2_0.client
 from oslo.config import cfg
 
 from caso.extract import base
 from caso import record
 
-opts = [
-    cfg.StrOpt('user',
-               default='accounting',
-               help='User to authenticate as.'),
-    cfg.StrOpt('password',
-               default='',
-               help='Password to authenticate with.'),
-    cfg.StrOpt('endpoint',
-               default='',
-               help='Keystone endpoint to autenticate with.'),
-    cfg.BoolOpt('insecure',
-                default=False,
-                help='Perform an insecure connection (i.e. do '
-                'not verify the server\'s certificate. DO NOT USE '
-                'IN PRODUCTION'),
-    cfg.StrOpt('mapping_file',
-               default='/etc/caso/voms.json',
-               help='File containing the VO <-> tenant mapping for image '
-               'lists private to VOs'),
-]
-
 CONF = cfg.CONF
 CONF.import_opt("site_name", "caso.extract.manager")
-CONF.register_opts(opts, group="ceilometer")
-
-openstack_vm_statuses = {
-    'active': 'started',
-    'build': 'started',
-    'confirming_resize': 'started',
-    'deleted': 'completed',
-    'error': 'error',
-    'hard_reboot': 'started',
-    'migrating': 'started',
-    'password': 'started',
-    'paused': 'paused',
-    'reboot': 'started',
-    'rebuild': 'started',
-    'rescue': 'started',
-    'resize': 'started',
-    'revert_resize': 'started',
-    'verify_resize': 'started',
-    'shutoff': 'completed',
-    'suspended': 'suspended',
-    'terminated': 'completed',
-    'stopped': 'stopped',
-    'saving': 'started',
-    'unknown': 'unknown',
-}
+CONF.import_opt("user", "caso.extract.base", "extractor")
+CONF.import_opt("password", "caso.extract.base", "extractor")
+CONF.import_opt("endpoint", "caso.extract.base", "extractor")
+CONF.import_opt("insecure", "caso.extract.base", "extractor")
 
 
 class CeilometerExtractor(base.BaseExtractor):
-    def __init__(self):
-        # XXX: enolfc this is copying everything
-        #      should be put in a common base class
-        self.user = CONF.ceilometer.user
-        self.password = CONF.ceilometer.password
-        self.endpoint = CONF.ceilometer.endpoint
-
-        try:
-            mapping = json.loads(open(CONF.ceilometer.mapping_file).read())
-        except ValueError:
-            # FIXME(aloga): raise a proper exception here
-            raise
-        else:
-            self.voms_map = {}
-            for vo, vomap in mapping.iteritems():
-                self.voms_map[vomap["tenant"]] = vo
-
     def _get_ceilometer_client(self, tenant):
         return ceilometerclient.client.get_client(
             '2',
-            os_auth_url=self.endpoint,
-            os_username=self.user,
-            os_password=self.password,
+            os_auth_url=CONF.extractor.endpoint,
+            os_username=CONF.extractor.user,
+            os_password=CONF.extractor.password,
             os_tenant_name=tenant,
-            insecure=CONF.ceilometer.insecure)
-
-    def _get_keystone_client(self, tenant):
-        client = keystoneclient.v2_0.client.Client(
-            username=CONF.ceilometer.user,
-            password=CONF.ceilometer.password,
-            tenant_name=tenant,
-            auth_url=CONF.ceilometer.endpoint,
-            insecure=CONF.ceilometer.insecure)
-        client.authenticate()
-        return client
+            insecure=CONF.extractor.insecure)
 
     def _get_glance_client(self, ks_client):
         glance_ep = ks_client.service_catalog.get_endpoints(
@@ -125,7 +54,7 @@ class CeilometerExtractor(base.BaseExtractor):
             '2',
             glance_url,
             token=ks_client.auth_token,
-            insecure=CONF.ceilometer.insecure)
+            insecure=CONF.extractor.insecure)
 
     def _build_query(self, project_id=None, start_date=None, end_date=None):
         q = []
@@ -184,9 +113,7 @@ class CeilometerExtractor(base.BaseExtractor):
 
     def _build_record(self, instance, users, vo, images, now):
         metadata = instance.resource_metadata
-        status = openstack_vm_statuses.get(metadata.get('state',
-                                                        '').lower(),
-                                           'unknwon')
+        status = self.vm_status(metadata.get('state', ''))
         instance_image_id = metadata.get('image.id')
         if not instance_image_id:
             instance_image_id = metadata.get('image_meta.base_image_ref')
@@ -237,9 +164,8 @@ class CeilometerExtractor(base.BaseExtractor):
         glance_client = self._get_glance_client(ks_client)
 
         # users
+        users = self._get_keystone_users(ks_client)
         tenant_id = ks_client.tenant_id
-        users = ks_client.users.list(tenant_id=tenant_id)
-        users = {u.id: u.name for u in users}
 
         search_query = self._build_query(tenant_id, lastrun)
         instances = client.samples.list('instance', search_query)

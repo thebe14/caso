@@ -13,6 +13,12 @@
 # not update the last run date. (boolean value)
 #dry_run=false
 
+# Which extractor to use for getting the data. Only the
+# following middlewares are supported: ['ceilometer', 'nova'].
+# If you do not specify anything, nova will be used. (string
+# value)
+#extractor=nova
+
 # Site name as in GOCDB. (string value)
 #site_name=<None>
 
@@ -23,14 +29,11 @@
 # Spool directory. (string value)
 #spooldir=/var/spool/caso
 
-# Extractor (string value)
-#extractor=nova
 
-
-[nova]
+[extractor]
 
 #
-# Options defined in caso.extract.nova
+# Options defined in caso.extract.base
 #
 
 # User to authenticate as. (string value)
@@ -51,29 +54,6 @@
 # Keystone-VOMS. (string value)
 #mapping_file=/etc/caso/voms.json
 
-[ceilometer]
-
-#
-# Options defined in caso.extract.ceilometer
-#
-
-# User to authenticate as. (string value)
-#user=accounting
-
-# Password to authenticate with. (string value)
-#password=
-
-# Keystone endpoint to autenticate with. (string value)
-#endpoint=
-
-# Perform an insecure connection (i.e. do not verify the
-# server's certificate. DO NOT USE IN PRODUCTION. (boolean
-# value)
-#insecure=false
-
-# File containing the VO <-> tenant mapping as used in
-# Keystone-VOMS. (string value)
-#mapping_file=/etc/caso/voms.json
 
 [ssm]
 

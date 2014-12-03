@@ -15,101 +15,32 @@
 # under the License.
 
 import datetime
-import json
 
 import dateutil.parser
-import keystoneclient.v2_0.client
 import novaclient.client
 from oslo.config import cfg
 
 from caso.extract import base
 from caso import record
 
-opts = [
-    cfg.StrOpt('user',
-               default='accounting',
-               help='User to authenticate as.'),
-    cfg.StrOpt('password',
-               default='',
-               help='Password to authenticate with.'),
-    cfg.StrOpt('endpoint',
-               default='',
-               help='Keystone endpoint to autenticate with.'),
-    cfg.BoolOpt('insecure',
-                default=False,
-                help='Perform an insecure connection (i.e. do '
-                'not verify the server\'s certificate. DO NOT USE '
-                'IN PRODUCTION.'),
-    cfg.StrOpt('mapping_file',
-               default='/etc/caso/voms.json',
-               help='File containing the VO <-> tenant mapping as used '
-               'in Keystone-VOMS.'),
-]
-
 CONF = cfg.CONF
 CONF.import_opt("site_name", "caso.extract.manager")
-CONF.register_opts(opts, group="nova")
-
-openstack_vm_statuses = {
-    'active': 'started',
-    'build': 'started',
-    'confirming_resize': 'started',
-    'deleted': 'completed',
-    'error': 'error',
-    'hard_reboot': 'started',
-    'migrating': 'started',
-    'password': 'started',
-    'paused': 'paused',
-    'reboot': 'started',
-    'rebuild': 'started',
-    'rescue': 'started',
-    'resize': 'started',
-    'revert_resize': 'started',
-    'verify_resize': 'started',
-    'shutoff': 'completed',
-    'suspended': 'suspended',
-    'terminated': 'completed',
-    'stopped': 'stopped',
-    'saving': 'started',
-    'unknown': 'unknown',
-}
+CONF.import_opt("user", "caso.extract.base", "extractor")
+CONF.import_opt("password", "caso.extract.base", "extractor")
+CONF.import_opt("endpoint", "caso.extract.base", "extractor")
+CONF.import_opt("insecure", "caso.extract.base", "extractor")
 
 
 class OpenStackExtractor(base.BaseExtractor):
-    def __init__(self):
-        self.user = CONF.nova.user
-        self.password = CONF.nova.password
-        self.endpont = CONF.nova.endpoint
-
-        try:
-            mapping = json.loads(open(CONF.nova.mapping_file).read())
-        except ValueError:
-            # FIXME(aloga): raise a proper exception here
-            raise
-        else:
-            self.voms_map = {}
-            for vo, vomap in mapping.iteritems():
-                self.voms_map[vomap["tenant"]] = vo
-
     def _get_conn(self, tenant):
         client = novaclient.client.get_client_class("2")
         conn = client(
-            CONF.nova.user,
-            CONF.nova.password,
+            CONF.extractor.user,
+            CONF.extractor.password,
             tenant,
-            CONF.nova.endpoint,
-            insecure=CONF.nova.insecure,
+            CONF.extractor.endpoint,
+            insecure=CONF.extractor.insecure,
             service_type="compute")
-        conn.authenticate()
-        return conn
-
-    def _get_keystone_users(self, tenant):
-        conn = keystoneclient.v2_0.client.Client(
-            username=CONF.nova.user,
-            password=CONF.nova.password,
-            tenant_name=tenant,
-            auth_url=CONF.nova.endpoint,
-            insecure=CONF.nova.insecure)
         conn.authenticate()
         return conn
 
@@ -119,10 +50,9 @@ class OpenStackExtractor(base.BaseExtractor):
 
         # Try and except here
         conn = self._get_conn(tenant)
-        ks_conn = self._get_keystone_users(tenant)
+        ks_conn = self._get_keystone_client(tenant)
+        users = self._get_keystone_users(ks_conn)
         tenant_id = conn.client.tenant_id
-        users = ks_conn.users.list(tenant_id=tenant_id)
-        users = {u.id: u.username for u in users}
         servers = conn.servers.list(search_opts={"changes-since": lastrun})
 
         # FIXME(aloga): use start and end from the retreived servers
@@ -135,8 +65,7 @@ class OpenStackExtractor(base.BaseExtractor):
         vo = self.voms_map.get(tenant)
 
         for server in servers:
-            status = openstack_vm_statuses.get(server.status.lower(),
-                                               "unknown")
+            status = self.vm_status(server.status)
             image_id = None
             for image in images:
                 if image.id == server.image['id']:
