@@ -14,6 +14,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import json
 import pprint
 
 
@@ -78,3 +79,6 @@ class CloudRecord(object):
              'CloudType': self.cloud_type,
              'GlobalUserName': self.user_dn, }
         return d
+
+    def as_json(self):
+        return json.dumps(self.as_dict())
