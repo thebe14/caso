@@ -70,6 +70,18 @@
 
 
 #
+# Options defined in caso.manager
+#
+
+# Extract records but do not push records to SSM. This will
+# not update the last run date. (boolean value)
+#dry_run=false
+
+# Spool directory. (string value)
+#spooldir=/var/spool/caso
+
+
+#
 # Options defined in caso.extract.manager
 #
 
@@ -77,10 +89,6 @@
 # records from last run. If none are set, extract records from
 # the beginning of time. (string value)
 #extract_from=<None>
-
-# Extract records but do not push records to SSM. This will
-# not update the last run date. (boolean value)
-#dry_run=false
 
 # Which extractor to use for getting the data. Only the
 # following middlewares are supported: ['ceilometer', 'nova'].
@@ -95,8 +103,13 @@
 # value)
 #tenants=
 
-# Spool directory. (string value)
-#spooldir=/var/spool/caso
+
+#
+# Options defined in caso.messenger
+#
+
+# List of messenger that will dispatch records. (list value)
+#messengers=caso.messenger.noop.NoopMessenger
 
 
 [extractor]
@@ -127,7 +140,7 @@
 [ssm]
 
 #
-# Options defined in caso.ssm
+# Options defined in caso.messenger.ssm
 #
 
 # Directory to put the generated SSM records. (string value)

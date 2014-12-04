@@ -40,3 +40,7 @@ class CasoException(Exception):
                 raise exc_info[0], exc_info[1], exc_info[2]
 
         super(CasoException, self).__init__(message)
+
+
+class ClassNotFound(CasoException):
+    msg_fmt = "Class %(class_name)s could not be found: %(exception)s."

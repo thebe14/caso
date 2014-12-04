@@ -17,6 +17,7 @@
 import dirq.QueueSimple
 from oslo.config import cfg
 
+import caso.messenger
 from caso import utils
 
 opts = [
@@ -30,7 +31,7 @@ CONF = cfg.CONF
 CONF.register_opts(opts, group="ssm")
 
 
-class SsmMessager(object):
+class SsmMessager(caso.messenger.BaseMessenger):
     header = "APEL-cloud-message: v0.2"
     separator = "%%"
 

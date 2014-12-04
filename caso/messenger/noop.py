@@ -14,27 +14,14 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os
-import sys
+from __future__ import print_function
 
-from oslo.config import cfg
-
-import caso.config
-import caso.manager
-
-CONF = cfg.CONF
+import caso.messenger
 
 
-def main():
-    default_config_files = ["/etc/caso.conf",
-                            "etc/caso.conf",
-                            os.path.expanduser('~/.caso.conf')]
-    default_config_files = []
-    caso.config.parse_args(sys.argv,
-                           default_config_files=default_config_files)
-    manager = caso.manager.Manager()
-    manager.run()
-
-
-if __name__ == "__main__":
-    main()
+class NoopMessenger(caso.messenger.BaseMessenger):
+    """Noop messenger that does nothing."""
+    def push(self, records):
+        """Push records to nowhere."""
+        for uuid, _ in records.iteritems():
+            print("nooping %s" % uuid)

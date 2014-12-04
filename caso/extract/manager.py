@@ -16,9 +16,6 @@
 
 from __future__ import print_function
 
-import datetime
-import os.path
-
 import dateutil.parser
 from oslo.config import cfg
 from oslo.utils import importutils
@@ -34,9 +31,6 @@ opts = [
     cfg.ListOpt('tenants',
                 default=[],
                 help='List of tenants to extract accounting records from.'),
-    cfg.StrOpt('spooldir',
-               default='/var/spool/caso',
-               help='Spool directory.'),
 ]
 
 cli_opts = [
@@ -44,10 +38,6 @@ cli_opts = [
                help='Extract records from this date. If it is not set, '
                'extract records from last run. If none are set, extract '
                'records from the beginning of time.'),
-    cfg.BoolOpt('dry_run',
-                default=False,
-                help='Extract records but do not push records to SSM. This '
-                'will not update the last run date.'),
     cfg.StrOpt('extractor',
                choices=SUPPORTED_EXTRACTORS,
                default='nova',
@@ -62,46 +52,27 @@ CONF = cfg.CONF
 CONF.register_opts(opts)
 CONF.register_cli_opts(cli_opts)
 
-# NOTE(aloga): this needs to be after the CONF part
-import caso.ssm
-from caso import utils
 
-
-class ExtractorManager(object):
+class Manager(object):
     def __init__(self):
         extractor_class = importutils.import_class(
             SUPPORTED_EXTRACTORS[CONF.extractor])
         self.extractor = extractor_class()
-        self.messanger = caso.ssm.SsmMessager()
-        utils.makedirs(CONF.spooldir)
-        self.last_run_file = os.path.join(CONF.spooldir, "lastrun")
+        self.records = None
 
-    @property
-    def lastrun(self):
-        if CONF.extract_from is not None:
-            date = CONF.extract_from
-        elif os.path.exists(self.last_run_file):
-            with open(self.last_run_file, "r") as fd:
-                date = fd.read()
-        else:
-            date = "1970-01-01"
-
-        try:
-            date = dateutil.parser.parse(date)
-        except Exception:
-            # FIXME(aloga): raise a proper exception here
-            raise
-        return date
-
-    def extract(self):
-        # FIXME(aloga): we should lock here
-        lastrun = self.lastrun
+    def _extract(self, extract_from):
+        self.records = {}
         for tenant in CONF.tenants:
-            records = self.extractor.extract_for_tenant(tenant, lastrun)
-            if CONF.dry_run:
-                print("Extracted %d records for tenant '%s' from %s to now" %
-                      (len(records), tenant, lastrun))
-            else:
-                self.messanger.push(records)
-                with open(self.last_run_file, "w") as fd:
-                    fd.write(str(datetime.datetime.now()))
+            records = self.extractor.extract_for_tenant(tenant,
+                                                        extract_from)
+            print("Extracted %d records for tenant '%s' from %s to now" %
+                  (len(records), tenant, extract_from))
+            self.records.update(records)
+
+    def get_records(self, lastrun="1970-01-01"):
+        extract_from = CONF.extract_from or lastrun
+
+        extract_from = dateutil.parser.parse(extract_from)
+        if self.records is None:
+            self._extract(extract_from)
+        return self.records
