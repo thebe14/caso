@@ -14,11 +14,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import print_function
-
 import dateutil.parser
 from oslo.config import cfg
 from oslo.utils import importutils
+
+from caso import log
 
 SUPPORTED_EXTRACTORS = {
     'nova': 'caso.extract.nova.OpenStackExtractor',
@@ -52,6 +52,8 @@ CONF = cfg.CONF
 CONF.register_opts(opts)
 CONF.register_cli_opts(cli_opts)
 
+LOG = log.getLogger(__name__)
+
 
 class Manager(object):
     def __init__(self):
@@ -65,8 +67,8 @@ class Manager(object):
         for tenant in CONF.tenants:
             records = self.extractor.extract_for_tenant(tenant,
                                                         extract_from)
-            print("Extracted %d records for tenant '%s' from %s to now" %
-                  (len(records), tenant, extract_from))
+            LOG.info("Extracted %d records for tenant '%s' from %s to now" %
+                     (len(records), tenant, extract_from))
             self.records.update(records)
 
     def get_records(self, lastrun="1970-01-01"):

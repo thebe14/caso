@@ -14,8 +14,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import print_function
-
 import datetime
 
 import ceilometerclient.client
@@ -24,6 +22,7 @@ import glanceclient.client
 from oslo.config import cfg
 
 from caso.extract import base
+from caso import log
 from caso import record
 
 CONF = cfg.CONF
@@ -32,6 +31,8 @@ CONF.import_opt("user", "caso.extract.base", "extractor")
 CONF.import_opt("password", "caso.extract.base", "extractor")
 CONF.import_opt("endpoint", "caso.extract.base", "extractor")
 CONF.import_opt("insecure", "caso.extract.base", "extractor")
+
+LOG = log.getLogger(__name__)
 
 
 class CeilometerExtractor(base.BaseExtractor):
@@ -84,7 +85,7 @@ class CeilometerExtractor(base.BaseExtractor):
             r = records.get(instance_id)
             if not r:
                 # XXX: there is a sample for a VM that has no instance sample?
-                print("VM with some usage info but no instance metric?!")
+                LOG.debug("VM with some usage info but no instance metric?!")
                 continue
             instance_ts = instance_timestamps.get(instance_id, the_past)
             sample_ts = dateutil.parser.parse(sample.timestamp)

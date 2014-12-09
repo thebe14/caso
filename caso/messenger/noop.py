@@ -14,9 +14,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from __future__ import print_function
-
+from caso import log
 import caso.messenger
+
+LOG = log.getLogger(__name__)
 
 
 class NoopMessenger(caso.messenger.BaseMessenger):
@@ -24,4 +25,4 @@ class NoopMessenger(caso.messenger.BaseMessenger):
     def push(self, records):
         """Push records to nowhere."""
         for uuid, _ in records.iteritems():
-            print("nooping %s" % uuid)
+            LOG.info("nooping %s" % uuid)
