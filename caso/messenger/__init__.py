@@ -20,6 +20,7 @@ from oslo.config import cfg
 import six
 
 from caso import loadables
+from caso import log
 
 opts = [
     cfg.ListOpt('messengers',
@@ -30,6 +31,8 @@ opts = [
 CONF = cfg.CONF
 
 CONF.register_opts(opts)
+
+LOG = log.getLogger(__name__)
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -47,4 +50,8 @@ class Manager(loadables.BaseLoader):
 
     def push_to_all(self, records):
         for m in self.messengers:
-            m.push(records)
+            try:
+                m.push(records)
+            except Exception as e:
+                # Capture exception so that we can continue working
+                LOG.exception(e)
