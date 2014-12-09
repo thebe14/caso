@@ -44,3 +44,8 @@ class CasoException(Exception):
 
 class ClassNotFound(CasoException):
     msg_fmt = "Class %(class_name)s could not be found: %(exception)s."
+
+
+class LogstashConnectionError(CasoException):
+    msg_fmt = ("Cannot send data to logstash %(host)s:%(port)s, "
+               "reason: %(exception)s")

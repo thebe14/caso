@@ -54,4 +54,4 @@ class Manager(loadables.BaseLoader):
                 m.push(records)
             except Exception as e:
                 # Capture exception so that we can continue working
-                LOG.exception(e)
+                LOG.error(e)

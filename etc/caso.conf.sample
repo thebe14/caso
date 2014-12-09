@@ -141,6 +141,19 @@
 #mapping_file=/etc/caso/voms.json
 
 
+[logstash]
+
+#
+# Options defined in caso.messenger.logstash
+#
+
+# Logstash host to send records to. (string value)
+#host=localhost
+
+# Logstash server port. (integer value)
+#port=5000
+
+
 [ssm]
 
 #
