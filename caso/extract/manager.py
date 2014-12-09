@@ -17,6 +17,7 @@
 import dateutil.parser
 from oslo.config import cfg
 from oslo.utils import importutils
+import six
 
 from caso import log
 
@@ -74,7 +75,8 @@ class Manager(object):
     def get_records(self, lastrun="1970-01-01"):
         extract_from = CONF.extract_from or lastrun
 
-        extract_from = dateutil.parser.parse(extract_from)
+        if isinstance(extract_from, six.text_type):
+            extract_from = dateutil.parser.parse(extract_from)
         if self.records is None:
             self._extract(extract_from)
         return self.records
