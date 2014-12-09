@@ -107,6 +107,10 @@ DEFAULT_LOG_LEVELS = ['requests.packages.urllib3.connectionpool=WARN',
                       'urllib3.connectionpool=WARN']
 
 log_opts = [
+    cfg.StrOpt('logging_default_format_string',
+               default='%(asctime)s.%(msecs)03d %(process)d %(levelname)s '
+                       '%(name)s [-] %(message)s',
+               help='Format string to use for log messages without context.'),
     cfg.StrOpt('logging_debug_format_suffix',
                default='%(funcName)s %(pathname)s:%(lineno)d',
                help='Data to append to log format when level is DEBUG.'),

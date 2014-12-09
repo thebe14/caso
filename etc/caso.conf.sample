@@ -15,6 +15,10 @@
 # Log output to standard error. (boolean value)
 #use_stderr=true
 
+# Format string to use for log messages without context.
+# (string value)
+#logging_default_format_string=%(asctime)s.%(msecs)03d %(process)d %(levelname)s %(name)s [-] %(message)s
+
 # Data to append to log format when level is DEBUG. (string
 # value)
 #logging_debug_format_suffix=%(funcName)s %(pathname)s:%(lineno)d
