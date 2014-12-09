@@ -27,8 +27,8 @@ CONF = cfg.CONF
 
 
 def main():
-    default_config_files = ["/etc/caso.conf",
-                            "etc/caso.conf",
+    default_config_files = ["/etc/caso/caso.conf",
+                            "etc/caso/caso.conf",
                             os.path.expanduser('~/.caso.conf')]
     default_config_files = []
     caso.config.parse_args(sys.argv,
