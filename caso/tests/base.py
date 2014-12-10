@@ -18,7 +18,10 @@
 import os
 
 import fixtures
+from oslo.config import cfg
 import testtools
+
+CONF = cfg.CONF
 
 _TRUE_VALUES = ('True', 'true', '1', 'yes')
 
@@ -51,3 +54,9 @@ class TestCase(testtools.TestCase):
             self.useFixture(fixtures.MonkeyPatch('sys.stderr', stderr))
 
         self.log_fixture = self.useFixture(fixtures.FakeLogger())
+
+    def flags(self, **kw):
+        """Override flag variables for a test."""
+        group = kw.pop('group', None)
+        for k, v in kw.iteritems():
+            CONF.set_override(k, v, group)
