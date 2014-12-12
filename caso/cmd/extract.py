@@ -14,7 +14,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os
 import sys
 
 from oslo.config import cfg
@@ -27,12 +26,7 @@ CONF = cfg.CONF
 
 
 def main():
-    default_config_files = ["/etc/caso.conf",
-                            "etc/caso.conf",
-                            os.path.expanduser('~/.caso.conf')]
-    default_config_files = []
-    caso.config.parse_args(sys.argv,
-                           default_config_files=default_config_files)
+    caso.config.parse_args(sys.argv)
     log.setup('caso')
     manager = caso.manager.Manager()
     manager.run()
