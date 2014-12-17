@@ -18,10 +18,10 @@ Tests for `caso.manager` module.
 
 import contextlib
 import datetime
-import StringIO
 
 from dateutil import tz
 import mock
+import six
 
 from caso import manager
 from caso.tests import base
@@ -54,7 +54,7 @@ class TestCasoManager(base.TestCase):
 
     def test_lastrun_exists(self):
         expected = datetime.datetime(2014, 12, 10, 13, 10, 26, 664598)
-        aux = StringIO.StringIO(expected)
+        aux = six.StringIO(expected)
 
         with contextlib.nested(
             mock.patch("os.path.exists"),
@@ -67,7 +67,7 @@ class TestCasoManager(base.TestCase):
             self.assertEqual(expected, self.manager.lastrun)
 
     def test_lastrun_is_invalid(self):
-        aux = StringIO.StringIO("foo")
+        aux = six.StringIO("foo")
 
         # NOTE(aloga): manager.lastrun is a property, so we need to
         # create our own callable here.
