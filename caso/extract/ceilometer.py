@@ -18,6 +18,7 @@ import datetime
 
 import ceilometerclient.client
 import dateutil.parser
+from dateutil import tz
 import glanceclient.client
 from oslo.config import cfg
 
@@ -156,7 +157,8 @@ class CeilometerExtractor(base.BaseExtractor):
         return r
 
     def extract_for_tenant(self, tenant, lastrun):
-        now = datetime.datetime.now().replace(tzinfo=None)
+        now = datetime.datetime.now(tz.tzutc())
+        now.replace(tzinfo=None)
 
         # Try and except here
         # Getting clients

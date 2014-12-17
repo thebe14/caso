@@ -18,6 +18,7 @@ import datetime
 import os.path
 
 import dateutil.parser
+from dateutil import tz
 from oslo.config import cfg
 
 import caso.extract.manager
@@ -71,4 +72,4 @@ class Manager(object):
         if not CONF.dry_run:
             self.messenger.push_to_all(records)
             with open(self.last_run_file, "w") as fd:
-                fd.write(str(datetime.datetime.now()))
+                fd.write(str(datetime.datetime.now(tz.tzutc())))

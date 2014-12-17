@@ -6,9 +6,9 @@ six
 
 python-novaclient
 python-keystoneclient
-python-dateutil
 python-glanceclient
 python-ceilometerclient
 
 
 dirq
+python-dateutil
