@@ -1,4 +1,4 @@
-#caso
+# caso [![Build Status](https://travis-ci.org/IFCA/caso)](https://travis-ci.org/IFCA/caso)
 
 cASO is an OpenStack Accounting extractor.
 
