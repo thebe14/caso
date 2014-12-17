@@ -40,6 +40,9 @@ class SsmMessager(caso.messenger.BaseMessenger):
         utils.makedirs(CONF.ssm.output_path)
 
     def push(self, records):
+        if not records:
+            return
+
         entries = []
         for _, record in records.iteritems():
             aux = ""
