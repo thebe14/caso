@@ -15,6 +15,7 @@
 # under the License.
 
 import dateutil.parser
+from dateutil import tz
 from oslo.config import cfg
 from oslo.utils import importutils
 import six
@@ -38,7 +39,8 @@ cli_opts = [
     cfg.StrOpt('extract_from',
                help='Extract records from this date. If it is not set, '
                'extract records from last run. If none are set, extract '
-               'records from the beginning of time.'),
+               'records from the beginning of time. If no time zone is '
+               'specified, UTC will be used.'),
     cfg.StrOpt('extractor',
                choices=SUPPORTED_EXTRACTORS,
                default='nova',
@@ -77,6 +79,9 @@ class Manager(object):
 
         if isinstance(extract_from, six.string_types):
             extract_from = dateutil.parser.parse(extract_from)
+
+        if extract_from.tzinfo is None:
+            extract_from.replace(tzinfo=tz.tzutc())
         if self.records is None:
             self._extract(extract_from)
         return self.records

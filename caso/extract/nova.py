@@ -17,6 +17,7 @@
 import datetime
 
 import dateutil.parser
+from dateutil import tz
 import novaclient.client
 from oslo.config import cfg
 
@@ -45,7 +46,11 @@ class OpenStackExtractor(base.BaseExtractor):
         return conn
 
     def extract_for_tenant(self, tenant, lastrun):
-        now = datetime.datetime.now()
+        # Some API calls do not expect a TZ, so we have to remove the timezone
+        # from the dates. We assume that all dates coming from upstream are
+        # in UTC TZ.
+        lastrun = lastrun.replace(tzinfo=None)
+        now = datetime.datetime.now(tz.tzutc()).replace(tzinfo=None)
         end = now + datetime.timedelta(days=1)
 
         # Try and except here

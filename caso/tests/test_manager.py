@@ -20,6 +20,7 @@ import contextlib
 import datetime
 import StringIO
 
+from dateutil import tz
 import mock
 
 from caso import manager
@@ -89,7 +90,7 @@ class TestCasoManager(base.TestCase):
         # https://code.google.com/p/mock/issues/detail?id=117
         with mock.patch("caso.manager.Manager.lastrun",
                         new_callable=mock.PropertyMock) as lastrun:
-            lastrun.return_value = datetime.datetime.now()
+            lastrun.return_value = datetime.datetime.now(tz.tzutc())
             mngr = manager.Manager()
             mngr.messenger.push_to_all.assert_not_called()
             mngr.run()
