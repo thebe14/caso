@@ -41,5 +41,6 @@ records from the beggining of time.  If not time zone is specified, UTC will be 
 Running as a cron job
 ---------------------
 
-..
-   TODO: add cron info
+The best way of running ``caso`` is via a cron job like the following::
+
+    10 * * * * caso-extract
