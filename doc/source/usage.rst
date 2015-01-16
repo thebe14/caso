@@ -27,11 +27,20 @@ Use the ``--extract_from`` argument to specify the date from when the records sh
 value is set, then caso will extract the records from the last run. If equal to "None", then extract
 records from the beggining of time.  If not time zone is specified, UTC will be used.
 
-..
-   TODO: add comment on extracting records from the beggining of time.
+.. important::
+   If you are running an OpenStack Nova version lower than Kilo there is a
+   `bug <https://bugs.launchpad.net/nova/+bug/1398086>`_ in its API, making
+   impossible to paginate over deleted results.
+
+   Since nova is limiting the results to 1000 by default, if you are expecting
+   more than 1000 results you will get just the last 1000.  This is important
+   if you are publishing data for the first time, or if you are republishing
+   all your accounting). If this is your case, adjust the `osapi_max_limit` to
+   a larger value in `/etc/nova/nova.conf`.
 
 Running as a cron job
 ---------------------
 
-..
-   TODO: add cron info
+The best way of running ``caso`` is via a cron job like the following::
+
+    10 * * * * caso-extract

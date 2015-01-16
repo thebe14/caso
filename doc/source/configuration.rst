@@ -14,10 +14,13 @@
       under the License.
 
 Configuration
-=============
+*************
+
+Caso configuration
+==================
 
 caso uses a config file (default at ``/etc/caso/caso.conf``) with several
-sections. A sample file is available at ``etc/caso/caso.conf.sample``. 
+sections. A sample file is available at ``etc/caso/caso.conf.sample``.
 
 ``[DEFAULT]`` section
 ---------------------
@@ -45,10 +48,10 @@ This section specifies the configuration of the extractor (mainly the
 credentials to connect to the API. Check the following:
 
 * ``user`` (default: ``accounting``), name of the user. This user needs proper
-  permission to query the API for the tenant usages. 
+  permission to query the API for the tenant usages.
 * ``password`` (default: None), password of the user.
 * ``endpoint`` (default: None), keystone endpoint to authenticate with.
-* ``mapping_file`` (default: ``/etc/caso/voms.json``). File containing the 
+* ``mapping_file`` (default: ``/etc/caso/voms.json``). File containing the
   mapping from VOs to local tenants as configured in Keystone-VOMS. If
   you are running caso on keystone host, it likely
   is ``/etc/keystone/voms.json``. Otherwise, you have to sync this file.
@@ -70,3 +73,34 @@ Options defined here configure the logstash messenger. Available options:
 
 * ``host`` (default: ``localhost``), host of Logstash server.
 * ``port`` (default: ``5000``), Logstash server port.
+
+
+OpenStack Configuration
+=======================
+
+The user configured in the previous section has to be a member of each of the
+tenants (another option is to convert that user in an administrator, but the
+former option is a safer approach) for which it is extracting the accounting.
+Otherwise, ``caso`` will not be able to get the usages and will fail::
+
+    keystone role-create --name accounting
+    keystone user-create --name accounting --pass <password>
+    # For each of the tenants, add the user with the accounting role
+    keystone user-role-add --user accounting --role accounting --tenant <tenant>
+
+Also, this user needs access to Keystone so as to extract the users
+information.
+
+* If you are using the V2 identity API, you have to give admin rights to the
+  ``accounting`` user, editing the ``/etc/keystone/policy.json`` file and
+  replacing the line::
+
+      "admin_required": "role:admin or is_admin:1 or",
+
+  with::
+
+      "admin_required": "role:admin or is_admin:1 or role:accounting",
+
+* If you are using the V3 identity API you can grant the user just the rights
+  for listing the users adding the appropriate rules in the
+  ``/etc/keystone/policy.json``.
