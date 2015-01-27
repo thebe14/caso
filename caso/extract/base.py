@@ -96,7 +96,7 @@ class BaseExtractor(object):
     def _get_keystone_users(self, ks_client):
         tenant_id = ks_client.tenant_id
         users = ks_client.users.list(tenant_id=tenant_id)
-        return {u.id: u.username for u in users}
+        return {u.id: u.name for u in users}
 
     def vm_status(self, status):
         return openstack_vm_statuses.get(status.lower(), 'unknown')
