@@ -16,7 +16,6 @@
 Tests for `caso.manager` module.
 """
 
-import contextlib
 import datetime
 
 from dateutil import tz
@@ -36,7 +35,7 @@ class TestCasoManager(base.TestCase):
             "messenger": mock.patch('caso.messenger.Manager'),
         }
         self.mocks = {}
-        for k, p in self.patchers.iteritems():
+        for k, p in six.iteritems(self.patchers):
             self.mocks[k] = p.start()
 
         self.manager = manager.Manager()
@@ -54,17 +53,20 @@ class TestCasoManager(base.TestCase):
 
     def test_lastrun_exists(self):
         expected = datetime.datetime(2014, 12, 10, 13, 10, 26, 664598)
-        aux = six.StringIO(expected)
+        aux = six.StringIO(str(expected))
 
-        with contextlib.nested(
-            mock.patch("os.path.exists"),
-            mock.patch('__builtin__.open')
-        ) as (path, fopen):
-            fopen.return_value.__enter__ = lambda x: aux
-            fopen.return_value.__exit__ = mock.Mock()
-            path.return_value = True
+        if six.PY3:
+            builtins_open = 'builtins.open'
+        else:
+            builtins_open = '__builtin__.open'
 
-            self.assertEqual(expected, self.manager.lastrun)
+        with mock.patch("os.path.exists") as path:
+            with mock.patch(builtins_open) as fopen:
+                fopen.return_value.__enter__ = lambda x: aux
+                fopen.return_value.__exit__ = mock.Mock()
+                path.return_value = True
+
+                self.assertEqual(expected, self.manager.lastrun)
 
     def test_lastrun_is_invalid(self):
         aux = six.StringIO("foo")
@@ -74,15 +76,18 @@ class TestCasoManager(base.TestCase):
         def call(self):
             return self.manager.lastrun
 
-        with contextlib.nested(
-            mock.patch("os.path.exists"),
-            mock.patch('__builtin__.open')
-        ) as (path, fopen):
-            fopen.return_value.__enter__ = lambda x: aux
-            fopen.return_value.__exit__ = mock.Mock()
-            path.return_value = True
+        if six.PY3:
+            builtins_open = 'builtins.open'
+        else:
+            builtins_open = '__builtin__.open'
 
-            self.assertRaises(ValueError, call, self)
+        with mock.patch("os.path.exists") as path:
+            with mock.patch(builtins_open) as fopen:
+                fopen.return_value.__enter__ = lambda x: aux
+                fopen.return_value.__exit__ = mock.Mock()
+                path.return_value = True
+
+                self.assertRaises(ValueError, call, self)
 
     def test_dry_run(self):
         self.flags(dry_run=True)
