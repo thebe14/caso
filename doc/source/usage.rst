@@ -46,3 +46,14 @@ Running as a cron job
 The best way of running ``cASO`` is via a cron job like the following::
 
     10 * * * * caso-extract
+
+Migration from OSSSM
+--------------------
+
+If you had a previous installation of osssm, you can migrate to ``cASO``
+following these steps:
+
+#. Remove the previous osssm installation (e.g. remove apel-ssm-openstack rpm).
+#. Remove any cron jobs related to ``osssm.extract`` or ``osssm.push``, a single
+   cron job as described above is enough. You should keep the cron job that executes
+   ``ssmsend``, this is still needed to send the records to the accounting database.
