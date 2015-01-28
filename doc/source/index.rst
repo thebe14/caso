@@ -14,12 +14,12 @@
       under the License.
 
 =======================================
-caso, an OpenStack Accounting extractor
+cASO, an OpenStack Accounting extractor
 =======================================
 
-caso is a pluggable extractor of `Cloud Accounting Usage Records
+``cASO`` is a pluggable extractor of `Cloud Accounting Usage Records
 <https://wiki.egi.eu/wiki/Fedcloud-tf:WorkGroups:Scenario4#Cloud_Accounting_Usage_Record>`_
-from an OpenStack installation. caso gets usage information from nova or
+from an OpenStack installation. ``cASO`` gets usage information from nova or
 ceilometer APIs and can generate valid output for `Apel SSM
 <https://wiki.egi.eu/wiki/APEL>`_ or `logstash <http://logstash.net/>`_.
 

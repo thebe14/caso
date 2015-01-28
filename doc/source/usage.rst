@@ -20,12 +20,14 @@ Usage
 command line
 ------------
 
-caso provides the ``caso-extract`` command to generate new records from your OpenStack deployment.
+``cASO`` provides the ``caso-extract`` command to generate new records from
+your OpenStack deployment.
 ``caso-extract -h`` will show a complete list of available arguments.
 
-Use the ``--extract_from`` argument to specify the date from when the records should be extracted. If no
-value is set, then caso will extract the records from the last run. If equal to "None", then extract
-records from the beggining of time.  If not time zone is specified, UTC will be used.
+Use the ``--extract_from`` argument to specify the date from when the records
+should be extracted. If no value is set, then ``cASO`` will extract the records
+from the last run. If equal to "None", then extract records from the beggining
+of time.  If not time zone is specified, UTC will be used.
 
 .. important::
    If you are running an OpenStack Nova version lower than Kilo there is a
@@ -41,6 +43,6 @@ records from the beggining of time.  If not time zone is specified, UTC will be 
 Running as a cron job
 ---------------------
 
-The best way of running ``caso`` is via a cron job like the following::
+The best way of running ``cASO`` is via a cron job like the following::
 
     10 * * * * caso-extract

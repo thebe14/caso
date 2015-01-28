@@ -16,16 +16,16 @@
 Configuration
 *************
 
-Caso configuration
+cASO configuration
 ==================
 
-caso uses a config file (default at ``/etc/caso/caso.conf``) with several
+``cASO`` uses a config file (default at ``/etc/caso/caso.conf``) with several
 sections. A sample file is available at ``etc/caso/caso.conf.sample``.
 
 ``[DEFAULT]`` section
 ---------------------
 
-The ``[DEFAULT]`` section configures the basic behavior of caso. The sample
+The ``[DEFAULT]`` section configures the basic behavior of ``cASO``. The sample
 config file (``/etc/caso/caso.conf.sample``) includes a description
 of every option. You should check at least the following options:
 
@@ -45,7 +45,7 @@ of every option. You should check at least the following options:
 -----------------------
 
 This section specifies the configuration of the extractor (mainly the
-credentials to connect to the API. Check the following:
+credentials to connect to the API). Check the following:
 
 * ``user`` (default: ``accounting``), name of the user. This user needs proper
   permission to query the API for the tenant usages.
@@ -53,7 +53,7 @@ credentials to connect to the API. Check the following:
 * ``endpoint`` (default: None), keystone endpoint to authenticate with.
 * ``mapping_file`` (default: ``/etc/caso/voms.json``). File containing the
   mapping from VOs to local tenants as configured in Keystone-VOMS. If
-  you are running caso on keystone host, it likely
+  you are running ``cASO`` on keystone host, it likely
   is ``/etc/keystone/voms.json``. Otherwise, you have to sync this file.
 
 ``[ssm]`` section
@@ -81,7 +81,7 @@ OpenStack Configuration
 The user configured in the previous section has to be a member of each of the
 tenants (another option is to convert that user in an administrator, but the
 former option is a safer approach) for which it is extracting the accounting.
-Otherwise, ``caso`` will not be able to get the usages and will fail::
+Otherwise, ``cASO`` will not be able to get the usages and will fail::
 
     keystone role-create --name accounting
     keystone user-create --name accounting --pass <password>

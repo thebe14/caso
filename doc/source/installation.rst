@@ -22,7 +22,7 @@ Installation
 Pre-requisites
 --------------
 
-If you are planning to use caso for generating accounting records for EGI,
+If you are planning to use ``cASO`` for generating accounting records for EGI,
 you will need a valid APEL/SSM configuration. Follow the documentation
 available at the `EGI FedCloud wiki
 <https://wiki.egi.eu/wiki/Fedcloud-tf:WorkGroups:Scenario4#Publishing_Records>`_
@@ -45,7 +45,7 @@ On CentOS 6, you can use Software Collections to install Python 2.7 and then lib
     $ yum -y install python27
     $ yum -y install libffi-devel
     
-You can then install pip for that version of Python and use that to install caso::
+You can then install pip for that version of Python and use that to install ``cASO``::
 
     $ scl enable python27
     $ easy_install-2.7 pip
