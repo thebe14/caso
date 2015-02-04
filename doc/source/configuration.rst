@@ -16,16 +16,16 @@
 Configuration
 *************
 
-Caso configuration
+cASO configuration
 ==================
 
-caso uses a config file (default at ``/etc/caso/caso.conf``) with several
+``cASO`` uses a config file (default at ``/etc/caso/caso.conf``) with several
 sections. A sample file is available at ``etc/caso/caso.conf.sample``.
 
 ``[DEFAULT]`` section
 ---------------------
 
-The ``[DEFAULT]`` section configures the basic behavior of caso. The sample
+The ``[DEFAULT]`` section configures the basic behavior of ``cASO``. The sample
 config file (``/etc/caso/caso.conf.sample``) includes a description
 of every option. You should check at least the following options:
 
@@ -45,7 +45,7 @@ of every option. You should check at least the following options:
 -----------------------
 
 This section specifies the configuration of the extractor (mainly the
-credentials to connect to the API. Check the following:
+credentials to connect to the API). Check the following:
 
 * ``user`` (default: ``accounting``), name of the user. This user needs proper
   permission to query the API for the tenant usages.
@@ -53,8 +53,30 @@ credentials to connect to the API. Check the following:
 * ``endpoint`` (default: None), keystone endpoint to authenticate with.
 * ``mapping_file`` (default: ``/etc/caso/voms.json``). File containing the
   mapping from VOs to local tenants as configured in Keystone-VOMS. If
-  you are running caso on keystone host, it likely
+  you are running ``cASO`` on keystone host, it likely
   is ``/etc/keystone/voms.json``. Otherwise, you have to sync this file.
+* ``insecure`` (default: ``False``), wether to check or not the server's
+  certificate.
+
+.. important::
+   Your should not use ``insecure=True`` in production! If you get a SSL
+   error ( ``CERTIFICATE_VERIFY_FAILED``), this is probably due to the fact
+   that the request module CA bundle does not contain the CA of your server.
+
+   If you are using the request module of your distribution package, it is
+   normally patched to use the system's default CA bundle
+   (``/etc/ssl/certs/ca-certificates.crt`` from the ``ca-certificates``
+   package on Debian systems and ``/etc/pki/tls/certs/ca-bundle.crt`` from the
+   ``ca-certificates``on RH systems). Check the packages documentation to add a
+   new CA to those bundles.
+
+   If you are not installing request through the distribution packages (e.g.
+   via pip), it uses its own vendorized CA bundle, located in the distribution
+   directory (i.e. requests/cacert.pem). It should be enough to append the
+   correct certificates to the end of the cacert.pem file. In a virtualenv,
+   the bundle should be located at
+   ``$VIRTUAL_ENV/lib/python2.7/site-packages/requests/``
+
 
 ``[ssm]`` section
 -----------------
@@ -81,7 +103,7 @@ OpenStack Configuration
 The user configured in the previous section has to be a member of each of the
 tenants (another option is to convert that user in an administrator, but the
 former option is a safer approach) for which it is extracting the accounting.
-Otherwise, ``caso`` will not be able to get the usages and will fail::
+Otherwise, ``cASO`` will not be able to get the usages and will fail::
 
     keystone role-create --name accounting
     keystone user-create --name accounting --pass <password>

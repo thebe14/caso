@@ -22,7 +22,7 @@ Installation
 Pre-requisites
 --------------
 
-If you are planning to use caso for generating accounting records for EGI,
+If you are planning to use ``cASO`` for generating accounting records for EGI,
 you will need a valid APEL/SSM configuration. Follow the documentation
 available at the `EGI FedCloud wiki
 <https://wiki.egi.eu/wiki/Fedcloud-tf:WorkGroups:Scenario4#Publishing_Records>`_
@@ -38,3 +38,41 @@ Or, if you have virtualenvwrapper installed::
 
     $ mkvirtualenv caso
     $ pip install caso
+
+CentOS 6
+********
+    
+On CentOS 6, you can use Software Collections to install Python 2.7::
+    
+    $ yum -y install centos-release-SCL
+    $ yum -y install python27
+
+There are also some dependencies of the packages used by ``cASO`` that need to
+be installed (gcc, libffi-devel adn openssl-devel)::
+
+    $ yum -y install gcc libffi-devel openssl-devel
+    
+You can then install pip for that version of Python and use that to install
+``cASO``::
+
+    $ scl enable python27 bash
+    $ easy_install-2.7 pip
+    $ pip install caso
+    $ exit    # this terminates bash with the SCL python2.7
+
+In this case you can later on use ``caso-extract`` with the following command
+line::
+
+    $ scl enable python27 caso-extract
+
+Alternatively, if you want to use a virtualenv::
+
+    $ scl enable python27 bash
+    $ virtualenv caso
+    $ . caso/bin/activate
+    $ pip install caso
+    $ exit    # this terminates bash with the SCL python2.7
+
+Running from the virtualenv::
+
+    $ scl enable python27 caso/bin/caso-extract
