@@ -55,6 +55,28 @@ credentials to connect to the API). Check the following:
   mapping from VOs to local tenants as configured in Keystone-VOMS. If
   you are running ``cASO`` on keystone host, it likely
   is ``/etc/keystone/voms.json``. Otherwise, you have to sync this file.
+* ``insecure`` (default: ``False``), wether to check or not the server's
+  certificate.
+
+.. important::
+   Your should not use ``insecure=True`` in production! If you get a SSL
+   error ( ``CERTIFICATE_VERIFY_FAILED``), this is probably due to the fact
+   that the request module CA bundle does not contain the CA of your server.
+
+   If you are using the request module of your distribution package, it is
+   normally patched to use the system's default CA bundle
+   (``/etc/ssl/certs/ca-certificates.crt`` from the ``ca-certificates``
+   package on Debian systems and ``/etc/pki/tls/certs/ca-bundle.crt`` from the
+   ``ca-certificates``on RH systems). Check the packages documentation to add a
+   new CA to those bundles.
+
+   If you are not installing request through the distribution packages (e.g.
+   via pip), it uses its own vendorized CA bundle, located in the distribution
+   directory (i.e. requests/cacert.pem). It should be enough to append the
+   correct certificates to the end of the cacert.pem file. In a virtualenv,
+   the bundle should be located at
+   ``$VIRTUAL_ENV/lib/python2.7/site-packages/requests/``
+
 
 ``[ssm]`` section
 -----------------
