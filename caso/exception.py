@@ -16,6 +16,8 @@
 
 import sys
 
+import six
+
 from caso import log
 
 LOG = log.getLogger(__name__)
@@ -37,7 +39,7 @@ class CasoException(Exception):
                 LOG.exception('Exception in string format operation')
                 for name, value in kwargs.iteritems():
                     LOG.error("%s: %s" % (name, value))
-                raise exc_info[0], exc_info[1], exc_info[2]
+                six.reraise(exc_info[0], exc_info[1], exc_info[2])
 
         super(CasoException, self).__init__(message)
 
