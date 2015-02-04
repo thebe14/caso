@@ -14,20 +14,14 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import datetime
-
 import ceilometerclient.client
 import dateutil.parser
-from dateutil import tz
-import glanceclient.client
 from oslo.config import cfg
 
-from caso.extract import base
+from caso.extract import nova
 from caso import log
-from caso import record
 
 CONF = cfg.CONF
-CONF.import_opt("site_name", "caso.extract.manager")
 CONF.import_opt("user", "caso.extract.base", "extractor")
 CONF.import_opt("password", "caso.extract.base", "extractor")
 CONF.import_opt("endpoint", "caso.extract.base", "extractor")
@@ -36,7 +30,7 @@ CONF.import_opt("insecure", "caso.extract.base", "extractor")
 LOG = log.getLogger(__name__)
 
 
-class CeilometerExtractor(base.BaseExtractor):
+class CeilometerExtractor(nova.OpenStackExtractor):
     def _get_ceilometer_client(self, tenant):
         return ceilometerclient.client.get_client(
             '2',
@@ -44,18 +38,6 @@ class CeilometerExtractor(base.BaseExtractor):
             os_username=CONF.extractor.user,
             os_password=CONF.extractor.password,
             os_tenant_name=tenant,
-            insecure=CONF.extractor.insecure)
-
-    def _get_glance_client(self, ks_client):
-        glance_ep = ks_client.service_catalog.get_endpoints(
-            service_type='image',
-            endpoint_type='public')
-        glance_url = glance_ep['image'][0]['publicURL']
-        # glance client does not seem to work with user/password
-        return glanceclient.client.Client(
-            '2',
-            glance_url,
-            token=ks_client.auth_token,
             insecure=CONF.extractor.insecure)
 
     def _build_query(self, project_id=None, start_date=None, end_date=None):
@@ -80,19 +62,24 @@ class CeilometerExtractor(base.BaseExtractor):
         """
 
         instance_timestamps = {}
-        the_past = datetime.datetime(1, 1, 1)
         for sample in samples:
             instance_id = get_id(sample)
-            r = records.get(instance_id)
-            if not r:
-                # XXX: there is a sample for a VM that has no instance sample?
-                LOG.debug("VM with some usage info but no instance metric?!")
+            try:
+                r = records[instance_id]
+            except KeyError:
                 continue
-            instance_ts = instance_timestamps.get(instance_id, the_past)
+            # takes the maximum value from ceilometer
+            sample_value = unit_conv(sample.counter_volume)
+            instance_ts = instance_timestamps.get(instance_id, None)
+            if instance_ts is None:
+                r.__dict__[metric_name] = sample_value
+            try:
+                r.__dict__[metric_name] = max(r.__dict__[metric_name],
+                                              sample_value)
+            except KeyError:
+                r.__dict__[metric_name] = sample_value
             sample_ts = dateutil.parser.parse(sample.timestamp)
-            if sample_ts > instance_ts:
-                r.__dict__[metric_name] = unit_conv(sample.counter_volume)
-                instance_timestamps[instance_id] = sample_ts
+            instance_timestamps[instance_id] = sample_ts
 
     def _fill_cpu_metric(self, cpu_samples, records):
         self._fill_metric('cpu_duration', cpu_samples, records,
@@ -105,104 +92,23 @@ class CeilometerExtractor(base.BaseExtractor):
                           # convert bytes to GB
                           unit_conv=lambda v: int(v / 2 ** 30))
 
-    def _get_time_field(self, metadata, fields=[]):
-        for f in fields:
-            t = metadata.get(f, None)
-            if t:
-                dateutil.parser.parse(t).replace(tzinfo=None)
-        else:
-            return None
-
-    def _build_record(self, instance, users, vo, images, now):
-        metadata = instance.resource_metadata
-        status = self.vm_status(metadata.get('state', ''))
-        instance_image_id = metadata.get('image.id')
-        if not instance_image_id:
-            instance_image_id = metadata.get('image_meta.base_image_ref')
-        image_id = None
-        for image in images:
-            if instance_image_id == image.id:
-                image_id = image.get('vmcatcher_event_ad_mpuri', None)
-                break
-        else:
-            image_id = instance_image_id
-        r = record.CloudRecord(instance.resource_id,
-                               CONF.site_name,
-                               metadata.get('display_name'),
-                               instance.user_id,
-                               instance.project_id,
-                               vo,
-                               cpu_count=metadata.get('vcpus'),
-                               memory=metadata.get('memory_gb'),
-                               disk=metadata.get('disk_gb'),
-                               # this should contain "caso ceilometer vX"
-                               cloud_type="OpenStack",
-                               status=status,
-                               image_id=image_id,
-                               user_dn=users.get(instance.user_id, None))
-
-        start_time = self._get_time_field(metadata,
-                                          ('launched_at', 'created_at'))
-        end_time = self._get_time_field(metadata,
-                                        ('terminated_at', 'deleted_at'))
-        if start_time:
-            r.start_time = int(start_time.strftime("%s"))
-            if end_time:
-                r.end_time = int(end_time.strftime("%s"))
-                wall = end_time - start_time
-                r.wall_duration = int(wall.total_seconds())
-            else:
-                wall = now - start_time
-                r.wall_duration = int(wall.total_seconds())
-        return r
-
     def extract_for_tenant(self, tenant, lastrun):
-        now = datetime.datetime.now(tz.tzutc())
-        now.replace(tzinfo=None)
-
+        records = super(CeilometerExtractor,
+                        self).extract_for_tenant(tenant, lastrun)
         # Try and except here
-        # Getting clients
-        ks_client = self._get_keystone_client(tenant)
-        client = self._get_ceilometer_client(tenant)
-        glance_client = self._get_glance_client(ks_client)
+        ks_conn = self._get_keystone_client(tenant)
+        conn = self._get_ceilometer_client(tenant)
+        # See comment in nova.py, remove TZ from the dates.
+        lastrun = lastrun.replace(tzinfo=None)
+        search_query = self._build_query(ks_conn.tenant_id, lastrun)
 
-        # users
-        users = self._get_keystone_users(ks_client)
-        tenant_id = ks_client.tenant_id
-
-        search_query = self._build_query(tenant_id, lastrun)
-        instances = client.samples.list('instance', search_query)
-
-        # XXX should we query glance for every VM or not?
-        images = list(glance_client.images.list())
-
-        records = {}
-
-        vo = self.voms_map.get(tenant)
-
-        for instance in instances:
-            # it seems the only event type with relevant metadata is
-            # 'compute.instance.exists'
-            ev_type = instance.resource_metadata.get('event_type', None)
-            if ev_type != 'compute.instance.exists':
-                continue
-            # this assumes that records are returned with decreasing timestamp
-            # so the status and dates are the last ones.
-            if instance.resource_id in records:
-                continue
-            records[instance.resource_id] = self._build_record(instance,
-                                                               users,
-                                                               vo,
-                                                               images,
-                                                               now)
-
-        cpu = client.samples.list(meter_name='cpu', q=search_query)
+        cpu = conn.samples.list(meter_name='cpu', q=search_query)
         self._fill_cpu_metric(cpu, records)
-        net_in = client.samples.list(meter_name='network.incoming.bytes',
-                                     q=search_query)
+        net_in = conn.samples.list(meter_name='network.incoming.bytes',
+                                   q=search_query)
         self._fill_net_metric('network_in', net_in, records)
-        net_out = client.samples.list(meter_name='network.outcoming.bytes',
-                                      q=search_query)
+        net_out = conn.samples.list(meter_name='network.outcoming.bytes',
+                                    q=search_query)
         self._fill_net_metric('network_out', net_out, records)
 
         return records
