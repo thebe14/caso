@@ -1,0 +1,48 @@
+Source: caso
+Section: net
+Priority: extra
+Maintainer: Alvaro Lopez Garcia <aloga@ifca.unican.es>
+Uploaders: Alvaro Lopez Garcia <aloga@ifca.unican.es>
+Homepage: https://github.com/IFCA/caso
+Build-Depends:
+ debhelper (>= 7.0.50),
+ python-all (>= 2.7),
+ python-all-dev (>= 2.7),
+Build-Depends-Indep:
+ python-pbr (>= 0.6),
+ python-setuptools,
+ python-sphinx
+Standards-Version: 3.9.3
+XS-Python-Version: >= 2.7
+
+Package: caso
+Architecture: all
+Section: python
+Depends:
+ python-oslo.config,
+ python-oslo.utils,
+ python-novaclient,
+ python-keystoneclient,
+ python-glanceclient,
+ python-ceilometerclient,
+ python-dateutil,
+ python-dirq,
+ python-six (>=1.4.0),
+ ${python:Depends},
+ ${misc:Depends},
+Suggests: apel-ssm-openstack
+Provides: ${python:Provides}
+XS-Python-Version: ${python:Versions}
+Description: cASO is an OpenStack Accounting extractor.
+ .
+ This program will extract usage records for each tenant and
+ associate those records to a VO so that they can be sent to the
+ EGI Accounting system.
+
+Package: caso-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}, libjs-jquery
+Description: cASO is an OpenStack Accounting extractor.
+ .
+ This package contains the cASO documentation.

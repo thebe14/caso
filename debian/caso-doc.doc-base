@@ -1,0 +1,10 @@
+Document: caso-doc
+Title: cASO Documentation
+Author: Alvaro Lopez Garcia
+Abstract: Sphinx documentation for Keystone
+Section: Network/File Transfer
+
+Format: HTML
+Index: /usr/share/doc/caso/html/index.html
+Files: /usr/share/doc/caso/html/*
+

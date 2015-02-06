@@ -1,0 +1,22 @@
+caso (0.2-1) stable; urgency=medium
+
+  [ Adam Huffman ]
+  * [b8bdd16] Update installation.rst
+
+  [ Enol Fernandez ]
+  * [a090ff9] Use coherent capitalization of cASO.
+  * [47cb63a] Added info on migration from osssm.
+  * [909f2a4] Improve CentOS 6 information.
+  * [53da27c] Update to support python3.
+  * [68a81f3] Added information about SSL certificate checking.
+  * [3e52724] Ceilometer extractor now extends nova information.
+
+ -- Alvaro Lopez Garcia <aloga@ifca.unican.es>  Mon, 09 Feb 2015 10:35:05 +0100
+
+caso (0.1.1) stable; urgency=medium
+
+  * UNRELEASED
+
+  [ Alvaro Lopez Garcia ]
+
+ -- Alvaro Lopez Garcia <aloga@ifca.unican.es>  Mon, 09 Feb 2015 10:34:26 +0100
