@@ -15,6 +15,7 @@
 # under the License.
 
 import datetime
+import operator
 
 import dateutil.parser
 from dateutil import tz
@@ -69,8 +70,15 @@ class OpenStackExtractor(base.BaseExtractor):
         tenant_id = conn.client.tenant_id
         servers = conn.servers.list(search_opts={"changes-since": lastrun})
 
-        # FIXME(aloga): use start and end from the retreived servers
-        aux = conn.usage.get(tenant_id, lastrun, end)
+        servers = sorted(servers, key=operator.attrgetter("created"))
+
+        if servers:
+            start = dateutil.parser.parse(servers[0].created)
+            start.replace(tzinfo=None)
+        else:
+            start = lastrun
+
+        aux = conn.usage.get(tenant_id, start, end)
         usages = getattr(aux, "server_usages", [])
 
         images = conn.images.list()
@@ -109,7 +117,6 @@ class OpenStackExtractor(base.BaseExtractor):
             records[instance_id].memory = usage["memory_mb"]
             records[instance_id].cpu_count = usage["vcpus"]
             records[instance_id].disk = usage["local_gb"]
-            records[instance_id].cpu_duration = int(usage["hours"] * 3600)
 
             started = dateutil.parser.parse(usage["started_at"])
             records[instance_id].start_time = int(started.strftime("%s"))
@@ -120,5 +127,11 @@ class OpenStackExtractor(base.BaseExtractor):
             else:
                 wall = now - started
 
-            records[instance_id].wall_duration = int(wall.total_seconds())
+            wall = int(wall.total_seconds())
+            records[instance_id].wall_duration = wall
+
+            cput = int(usage["hours"] * 3600)
+            # NOTE(aloga): in some cases there may be rounding errors and cput
+            # may be larger than wall.
+            records[instance_id].cpu_duration = cput if cput < wall else wall
         return records
