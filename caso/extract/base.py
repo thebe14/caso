@@ -100,3 +100,15 @@ class BaseExtractor(object):
 
     def vm_status(self, status):
         return openstack_vm_statuses.get(status.lower(), 'unknown')
+
+    @abc.abstractmethod
+    def extract_for_tenant(self, tenant, extract_from):
+        """Extract records for a tenant from given date.
+
+        :param tenant: Tenant to extract records for.
+        :param extract_from: datetime.datetime object indicating the date to
+                             extract records from
+        :returns: A dictionary of {"server_id": caso.record.Record"}
+
+        This method should be overriden in a subclass.
+        """
