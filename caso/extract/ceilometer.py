@@ -93,6 +93,16 @@ class CeilometerExtractor(nova.OpenStackExtractor):
                           unit_conv=lambda v: int(v / 2 ** 30))
 
     def extract_for_tenant(self, tenant, lastrun):
+        """Extract records for a tenant from given date.
+
+        This method will get information from nova, and will enhance it with
+        information from ceilometer.
+
+        :param tenant: Tenant to extract records for.
+        :param extract_from: datetime.datetime object indicating the date to
+                             extract records from
+        :returns: A dictionary of {"server_id": caso.record.Record"}
+        """
         records = super(CeilometerExtractor,
                         self).extract_for_tenant(tenant, lastrun)
         # Try and except here

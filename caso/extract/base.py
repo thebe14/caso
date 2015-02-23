@@ -99,6 +99,10 @@ class BaseExtractor(object):
         return {u.id: u.name for u in users}
 
     def vm_status(self, status):
+        """Return the status corresponding to the OpenStack status.
+
+        :param status: OpenStack status.
+        """
         return openstack_vm_statuses.get(status.lower(), 'unknown')
 
     @abc.abstractmethod

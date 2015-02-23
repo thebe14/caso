@@ -75,6 +75,13 @@ class Manager(object):
             self.records.update(records)
 
     def get_records(self, lastrun="1970-01-01"):
+        """Get records from given date
+
+        :param lastrun: date to get records from (optional).
+
+        If CONF.extract_from is present, it will be used instead of the
+        lastrun parameter.
+        """
         extract_from = CONF.extract_from or lastrun
 
         if isinstance(extract_from, six.string_types):
