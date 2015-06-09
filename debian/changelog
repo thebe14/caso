@@ -1,3 +1,14 @@
+caso (0.3-1) stable; urgency=medium
+
+  * [1540d13] Initial debian packaging stuff
+  * [e1aaa0e] Add license information to pbr metadata
+  * [cb2cec0] Add unit tests for base extractor manager
+  * [97faea1] Add missing method on BaseExtractor
+  * [6474f1d] Add docstrings
+  * [227921c] Fix CPU duration reporting
+
+ -- Alvaro Lopez Garcia <aloga@ifca.unican.es>  Tue, 09 Jun 2015 09:11:07 +0200
+
 caso (0.2-1) stable; urgency=medium
 
   [ Adam Huffman ]
