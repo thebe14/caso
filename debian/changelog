@@ -1,3 +1,9 @@
+caso (0.3.1-1) stable; urgency=medium
+
+  * [1236322] Fix TZ not being actually removed
+
+ -- Alvaro Lopez Garcia <aloga@ifca.unican.es>  Tue, 30 Jun 2015 12:12:39 +0200
+
 caso (0.3-1) stable; urgency=medium
 
   * [1540d13] Initial debian packaging stuff
