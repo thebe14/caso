@@ -74,7 +74,7 @@ class OpenStackExtractor(base.BaseExtractor):
 
         if servers:
             start = dateutil.parser.parse(servers[0].created)
-            start.replace(tzinfo=None)
+            start = start.replace(tzinfo=None)
         else:
             start = lastrun
 
