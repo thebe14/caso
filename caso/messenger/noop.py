@@ -14,7 +14,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from caso import log
+from oslo_log import log
+
 import caso.messenger
 
 LOG = log.getLogger(__name__)

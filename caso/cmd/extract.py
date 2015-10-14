@@ -17,9 +17,9 @@
 import sys
 
 from oslo_config import cfg
+from oslo_log import log
 
 import caso.config
-from caso import log
 import caso.manager
 
 CONF = cfg.CONF
@@ -27,7 +27,7 @@ CONF = cfg.CONF
 
 def main():
     caso.config.parse_args(sys.argv)
-    log.setup('caso')
+    log.setup(cfg.CONF, 'caso')
     manager = caso.manager.Manager()
     manager.run()
 

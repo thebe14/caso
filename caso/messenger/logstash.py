@@ -16,11 +16,12 @@
 
 import socket
 
+from oslo_config import cfg
+from oslo_log import log
+
 from caso import exception
-from caso import log
 import caso.messenger
 
-from oslo_config import cfg
 
 opts = [
     cfg.StrOpt('host',

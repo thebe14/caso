@@ -20,6 +20,7 @@ Architecture: all
 Section: python
 Depends:
  python-oslo-config,
+ python-oslo-log,
  python-oslo-utils,
  python-novaclient,
  python-keystoneclient,

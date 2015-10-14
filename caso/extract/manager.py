@@ -17,10 +17,9 @@
 import dateutil.parser
 from dateutil import tz
 from oslo_config import cfg
+from oslo_log import log
 from oslo_utils import importutils
 import six
-
-from caso import log
 
 SUPPORTED_EXTRACTORS = {
     'nova': 'caso.extract.nova.OpenStackExtractor',
