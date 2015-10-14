@@ -35,8 +35,9 @@ CONF.import_opt("insecure", "caso.extract.base", "extractor")
 
 class OpenStackExtractor(base.BaseExtractor):
     def _get_conn(self, tenant):
-        client = novaclient.client.get_client_class("2")
+        client = novaclient.client.Client
         conn = client(
+            2,
             CONF.extractor.user,
             CONF.extractor.password,
             tenant,
