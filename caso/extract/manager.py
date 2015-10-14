@@ -67,10 +67,15 @@ class Manager(object):
     def _extract(self, extract_from):
         self.records = {}
         for tenant in CONF.tenants:
-            records = self.extractor.extract_for_tenant(tenant,
-                                                        extract_from)
-            LOG.info("Extracted %d records for tenant '%s' from %s to now" %
-                     (len(records), tenant, extract_from))
+            try:
+                records = self.extractor.extract_for_tenant(tenant,
+                                                            extract_from)
+            except Exception:
+                records = []
+                LOG.exception("Cannot extrat records for '%s'" % tenant)
+            else:
+                LOG.info("Extracted %d records for tenant '%s' from "
+                         "%s to now" % (len(records), tenant, extract_from))
             self.records.update(records)
 
     def get_records(self, lastrun="1970-01-01"):
