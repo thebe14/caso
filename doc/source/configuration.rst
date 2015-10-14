@@ -38,7 +38,7 @@ of every option. You should check at least the following options:
   records from.
 * ``messengers`` (list, default: ``caso.messenger.noop.NoopMessenger``). List
   of the messengers to publish data to. APEL messenger is:
-  ``caso.messenger.ssm.SsmMessager``, LogStash is
+  ``caso.messenger.ssm.SSMessengerV20``, LogStash is
   ``caso.messenger.logstash.LogstashMessenger``
 
 ``[extractor]`` section

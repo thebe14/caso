@@ -14,10 +14,16 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import logging
+import warnings
+
 from oslo_config import cfg
 from oslo_log import log
 
 import caso
+
+logging.captureWarnings(True)
+warnings.simplefilter("default", DeprecationWarning)
 
 log.register_options(cfg.CONF)
 
