@@ -20,7 +20,7 @@ import operator
 import dateutil.parser
 from dateutil import tz
 import novaclient.client
-from oslo.config import cfg
+from oslo_config import cfg
 
 from caso.extract import base
 from caso import record

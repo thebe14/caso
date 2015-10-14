@@ -16,7 +16,7 @@
 
 import ceilometerclient.client
 import dateutil.parser
-from oslo.config import cfg
+from oslo_config import cfg
 
 from caso.extract import nova
 from caso import log

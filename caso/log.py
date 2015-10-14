@@ -32,8 +32,8 @@ import socket
 import sys
 import traceback
 
-from oslo.config import cfg
-from oslo.utils import importutils
+from oslo_config import cfg
+from oslo_utils import importutils
 import six
 from six import moves
 
@@ -136,7 +136,7 @@ CONF.register_opts(log_opts)
 
 
 def list_opts():
-    """Entry point for oslo.config-generator."""
+    """Entry point for oslo_config-generator."""
     return [(None, copy.deepcopy(common_cli_opts)),
             (None, copy.deepcopy(logging_cli_opts)),
             (None, copy.deepcopy(generic_log_opts)),
