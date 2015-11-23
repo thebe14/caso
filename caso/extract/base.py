@@ -18,7 +18,7 @@ import abc
 import json
 
 import keystoneclient.v2_0.client
-from oslo.config import cfg
+from oslo_config import cfg
 import six
 
 opts = [

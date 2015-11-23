@@ -19,8 +19,9 @@ Package: caso
 Architecture: all
 Section: python
 Depends:
- python-oslo.config,
- python-oslo.utils,
+ python-oslo-config,
+ python-oslo-log,
+ python-oslo-utils,
  python-novaclient,
  python-keystoneclient,
  python-glanceclient,

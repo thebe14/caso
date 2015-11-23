@@ -16,11 +16,11 @@
 
 import abc
 
-from oslo.config import cfg
+from oslo_config import cfg
+from oslo_log import log
 import six
 
 from caso import loadables
-from caso import log
 
 opts = [
     cfg.ListOpt('messengers',

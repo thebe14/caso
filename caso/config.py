@@ -14,9 +14,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-from oslo.config import cfg
+from oslo_config import cfg
+from oslo_log import log
 
 import caso
+
+log.register_options(cfg.CONF)
 
 
 def parse_args(argv, default_config_files=None):

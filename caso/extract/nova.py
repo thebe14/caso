@@ -20,7 +20,7 @@ import operator
 import dateutil.parser
 from dateutil import tz
 import novaclient.client
-from oslo.config import cfg
+from oslo_config import cfg
 
 from caso.extract import base
 from caso import record
@@ -35,8 +35,9 @@ CONF.import_opt("insecure", "caso.extract.base", "extractor")
 
 class OpenStackExtractor(base.BaseExtractor):
     def _get_conn(self, tenant):
-        client = novaclient.client.get_client_class("2")
+        client = novaclient.client.Client
         conn = client(
+            2,
             CONF.extractor.user,
             CONF.extractor.password,
             tenant,
@@ -74,7 +75,7 @@ class OpenStackExtractor(base.BaseExtractor):
 
         if servers:
             start = dateutil.parser.parse(servers[0].created)
-            start.replace(tzinfo=None)
+            start = start.replace(tzinfo=None)
         else:
             start = lastrun
 

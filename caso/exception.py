@@ -16,9 +16,8 @@
 
 import sys
 
+from oslo_log import log
 import six
-
-from caso import log
 
 LOG = log.getLogger(__name__)
 

@@ -15,7 +15,7 @@
 # under the License.
 
 import dirq.QueueSimple
-from oslo.config import cfg
+from oslo_config import cfg
 
 import caso.messenger
 from caso import utils

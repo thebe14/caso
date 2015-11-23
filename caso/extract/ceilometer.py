@@ -16,10 +16,10 @@
 
 import ceilometerclient.client
 import dateutil.parser
-from oslo.config import cfg
+from oslo_config import cfg
+from oslo_log import log
 
 from caso.extract import nova
-from caso import log
 
 CONF = cfg.CONF
 CONF.import_opt("user", "caso.extract.base", "extractor")

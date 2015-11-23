@@ -19,7 +19,7 @@ import os.path
 
 import dateutil.parser
 from dateutil import tz
-from oslo.config import cfg
+from oslo_config import cfg
 
 import caso.extract.manager
 import caso.messenger
