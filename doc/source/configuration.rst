@@ -37,9 +37,10 @@ of every option. You should check at least the following options:
 * ``tenants`` (list value, default empty). List of the tenants to extract
   records from.
 * ``messengers`` (list, default: ``caso.messenger.noop.NoopMessenger``). List
-  of the messengers to publish data to. APEL messenger is:
-  ``caso.messenger.ssm.SSMessengerV20``, LogStash is
-  ``caso.messenger.logstash.LogstashMessenger``
+  of the messengers to publish data to. Valid messenges are:
+    * ``caso.messenger.ssm.SSMMessengerV02`` for publishing APEL V0.2 records.
+    * ``caso.messenger.ssm.SSMMessengerV04`` for publishing APEL V0.4 records.
+    * ``caso.messenger.logstash.LogstashMessenger`` for publishing to Logstash.
 
 ``[extractor]`` section
 -----------------------
