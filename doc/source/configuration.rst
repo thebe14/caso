@@ -34,6 +34,8 @@ of every option. You should check at least the following options:
   ``nova``. Both should generate equivalent information.
 * ``site_name`` (default value: ``<None>``). Name of the site as defined in
   GOCDB.
+* ``service_name`` (default value: ``$site_name``). Name of the service within
+  a site. This is used if you have several endpoints within your site.
 * ``tenants`` (list value, default empty). List of the tenants to extract
   records from.
 * ``messengers`` (list, default: ``caso.messenger.noop.NoopMessenger``). List
