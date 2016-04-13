@@ -52,9 +52,13 @@ credentials to connect to the API). Check the following:
 * ``password`` (default: None), password of the user.
 * ``endpoint`` (default: None), keystone endpoint to authenticate with.
 * ``mapping_file`` (default: ``/etc/caso/voms.json``). File containing the
-  mapping from VOs to local tenants as configured in Keystone-VOMS. If
-  you are running ``cASO`` on keystone host, it likely
-  is ``/etc/keystone/voms.json``. Otherwise, you have to sync this file.
+  mapping from VOs to local tenants as configured in Keystone-VOMS, in the
+  form::
+    {
+        "VO": {
+            "tenants": ["foo", "bar"],
+        }
+    }
 * ``insecure`` (default: ``False``), wether to check or not the server's
   certificate.
 
