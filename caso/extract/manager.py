@@ -80,7 +80,7 @@ class Manager(object):
             else:
                 LOG.info("Extracted %d records for tenant '%s' from "
                          "%s to %s" % (len(records), tenant, extract_from,
-                         extract_to))
+                                       extract_to))
             self.records.update(records)
 
     def get_records(self, lastrun="1970-01-01"):
