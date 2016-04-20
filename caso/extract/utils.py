@@ -38,5 +38,5 @@ def server_outside_interval(start, end, vm_start, vm_end):
     :param vm_end: when the VM was terminated
     :returns: True if the VM shouldn't be included, False otherwise
     """
-    return not _inside_interval(start, end, vm_start) or \
-        (vm_end is not None and not _inside_interval(start, end, vm_end))
+    return (not _inside_interval(start, end, vm_start) or
+            (vm_end is not None and not _inside_interval(start, end, vm_end)))

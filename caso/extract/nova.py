@@ -21,8 +21,8 @@ import novaclient.client
 from oslo_config import cfg
 
 from caso.extract import base
+from caso.extract import utils
 from caso import record
-from caso.extract.utils import server_outside_interval
 
 CONF = cfg.CONF
 CONF.import_opt("site_name", "caso.extract.manager")
@@ -127,7 +127,8 @@ class OpenStackExtractor(base.BaseExtractor):
             # Since the nova API only gives you the "changes-since",
             # we need to filter the machines that changed outside
             # the interval
-            if server_outside_interval(lastrun, extract_to, started, ended):
+            if utils.server_outside_interval(lastrun, extract_to, started,
+                                             ended):
                 del records[instance_id]
                 continue
 

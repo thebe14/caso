@@ -113,7 +113,7 @@ class CeilometerExtractor(nova.OpenStackExtractor):
         # See comment in nova.py, remove TZ from the dates.
         lastrun = lastrun.replace(tzinfo=None)
         search_query = self._build_query(ks_conn.tenant_id, lastrun,
-            extract_to)
+                                         extract_to)
 
         cpu = conn.samples.list(meter_name='cpu', q=search_query)
         self._fill_cpu_metric(cpu, records)

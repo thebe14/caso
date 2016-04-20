@@ -16,11 +16,11 @@
 Tests for `caso.extract.manager` module.
 """
 
+import datetime
 import uuid
 
 import dateutil.parser
 import mock
-import datetime
 
 from caso.extract import manager
 from caso.tests import base
@@ -91,7 +91,6 @@ class TestCasoManager(base.TestCase):
     def test_get_records_with_lastrun(self):
         date = "1999-12-11"
 
-        print self.flags()
         dt = dateutil.parser.parse(date)
         mock_now = datetime.datetime(2016, 4, 19, 15, 4, 14, 468060)
 

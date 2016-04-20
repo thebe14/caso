@@ -63,5 +63,5 @@ class TestCase(testtools.TestCase):
             CONF.set_override(k, v, group)
 
     def reset_flags(self):
-        """Reset flags"""
+        """Reset flags."""
         CONF.reset()
