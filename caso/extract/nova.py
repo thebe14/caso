@@ -14,15 +14,14 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import datetime
 import operator
 
 import dateutil.parser
-from dateutil import tz
 import novaclient.client
 from oslo_config import cfg
 
 from caso.extract import base
+from caso.extract import utils
 from caso import record
 
 CONF = cfg.CONF
@@ -47,7 +46,7 @@ class OpenStackExtractor(base.BaseExtractor):
         conn.authenticate()
         return conn
 
-    def extract_for_tenant(self, tenant, lastrun):
+    def extract_for_tenant(self, tenant, lastrun, extract_to):
         """Extract records for a tenant from given date querying nova.
 
         This method will get information from nova.
@@ -55,14 +54,14 @@ class OpenStackExtractor(base.BaseExtractor):
         :param tenant: Tenant to extract records for.
         :param extract_from: datetime.datetime object indicating the date to
                              extract records from
+        :param extract_to: datetime.datetime object indicating the date to
+                           extract records to
         :returns: A dictionary of {"server_id": caso.record.Record"}
         """
         # Some API calls do not expect a TZ, so we have to remove the timezone
         # from the dates. We assume that all dates coming from upstream are
         # in UTC TZ.
         lastrun = lastrun.replace(tzinfo=None)
-        now = datetime.datetime.now(tz.tzutc()).replace(tzinfo=None)
-        end = now + datetime.timedelta(days=1)
 
         # Try and except here
         conn = self._get_conn(tenant)
@@ -79,7 +78,7 @@ class OpenStackExtractor(base.BaseExtractor):
         else:
             start = lastrun
 
-        aux = conn.usage.get(tenant_id, start, end)
+        aux = conn.usage.get(tenant_id, start, extract_to)
         usages = getattr(aux, "server_usages", [])
 
         images = conn.images.list()
@@ -120,13 +119,25 @@ class OpenStackExtractor(base.BaseExtractor):
             records[instance_id].disk = usage["local_gb"]
 
             started = dateutil.parser.parse(usage["started_at"])
+            if usage.get('ended_at', None) is not None:
+                ended = dateutil.parser.parse(usage["ended_at"])
+            else:
+                ended = None
+
+            # Since the nova API only gives you the "changes-since",
+            # we need to filter the machines that changed outside
+            # the interval
+            if utils.server_outside_interval(lastrun, extract_to, started,
+                                             ended):
+                del records[instance_id]
+                continue
+
             records[instance_id].start_time = int(started.strftime("%s"))
-            if usage.get("ended_at", None) is not None:
-                ended = dateutil.parser.parse(usage['ended_at'])
+            if ended is not None:
                 records[instance_id].end_time = int(ended.strftime("%s"))
                 wall = ended - started
             else:
-                wall = now - started
+                wall = extract_to - started
 
             wall = int(wall.total_seconds())
             records[instance_id].wall_duration = wall

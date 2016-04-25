@@ -92,7 +92,7 @@ class CeilometerExtractor(nova.OpenStackExtractor):
                           # convert bytes to GB
                           unit_conv=lambda v: int(v / 2 ** 30))
 
-    def extract_for_tenant(self, tenant, lastrun):
+    def extract_for_tenant(self, tenant, lastrun, extract_to):
         """Extract records for a tenant from given date.
 
         This method will get information from nova, and will enhance it with
@@ -101,16 +101,19 @@ class CeilometerExtractor(nova.OpenStackExtractor):
         :param tenant: Tenant to extract records for.
         :param extract_from: datetime.datetime object indicating the date to
                              extract records from
+        :param extract_to: datetime.datetime object indicating the date to
+                             extract records to
         :returns: A dictionary of {"server_id": caso.record.Record"}
         """
         records = super(CeilometerExtractor,
-                        self).extract_for_tenant(tenant, lastrun)
+                        self).extract_for_tenant(tenant, lastrun, extract_to)
         # Try and except here
         ks_conn = self._get_keystone_client(tenant)
         conn = self._get_ceilometer_client(tenant)
         # See comment in nova.py, remove TZ from the dates.
         lastrun = lastrun.replace(tzinfo=None)
-        search_query = self._build_query(ks_conn.tenant_id, lastrun)
+        search_query = self._build_query(ks_conn.tenant_id, lastrun,
+                                         extract_to)
 
         cpu = conn.samples.list(meter_name='cpu', q=search_query)
         self._fill_cpu_metric(cpu, records)
