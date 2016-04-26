@@ -43,8 +43,16 @@ of every option. You should check at least the following options:
     * ``caso.messenger.ssm.SSMMessengerV02`` for publishing APEL V0.2 records.
     * ``caso.messenger.ssm.SSMMessengerV04`` for publishing APEL V0.4 records.
     * ``caso.messenger.logstash.LogstashMessenger`` for publishing to Logstash.
+* ``mapping_file`` (default: ``/etc/caso/voms.json``). File containing the
+  mapping from VOs to local tenants as configured in Keystone-VOMS, in the
+  form::
+    {
+        "VO": {
+            "tenants": ["foo", "bar"],
+        }
+    }
 
-``[extractor]`` section
+``[extractor_<extractor_name>]`` section
 -----------------------
 
 This section specifies the configuration of the extractor (mainly the
@@ -54,14 +62,6 @@ credentials to connect to the API). Check the following:
   permission to query the API for the tenant usages.
 * ``password`` (default: None), password of the user.
 * ``endpoint`` (default: None), keystone endpoint to authenticate with.
-* ``mapping_file`` (default: ``/etc/caso/voms.json``). File containing the
-  mapping from VOs to local tenants as configured in Keystone-VOMS, in the
-  form::
-    {
-        "VO": {
-            "tenants": ["foo", "bar"],
-        }
-    }
 * ``insecure`` (default: ``False``), wether to check or not the server's
   certificate.
 
