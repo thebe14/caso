@@ -52,38 +52,24 @@ of every option. You should check at least the following options:
         }
     }
 
-``[extractor_<extractor_name>]`` section
------------------------
+``[keystone_auth]`` section
+---------------------------
 
-This section specifies the configuration of the extractor (mainly the
-credentials to connect to the API). Check the following:
+This section is used to specify the authentication credentials to be used to
+connect to the OpenStack APIs. cASO leverages the `OpenStack keystoneauth
+<https://docs.openstack.org/developer/keystoneauth/>`_ library for
+authentication, so that it is possible to use any authentication plugin that is
+available there (so starting on version 1.0 of cASO it is possible to use the
+Keystone V3 API).
 
-* ``user`` (default: ``accounting``), name of the user. This user needs proper
-  permission to query the API for the tenant usages.
-* ``password`` (default: None), password of the user.
-* ``endpoint`` (default: None), keystone endpoint to authenticate with.
-* ``insecure`` (default: ``False``), wether to check or not the server's
-  certificate.
 
 .. important::
-   Your should not use ``insecure=True`` in production! If you get a SSL
-   error ( ``CERTIFICATE_VERIFY_FAILED``), this is probably due to the fact
-   that the request module CA bundle does not contain the CA of your server.
+   You need to specify the ``auth_type`` that you want to use (normally
+   ``v3password`` is a good choice.
 
-   If you are using the request module of your distribution package, it is
-   normally patched to use the system's default CA bundle
-   (``/etc/ssl/certs/ca-certificates.crt`` from the ``ca-certificates``
-   package on Debian systems and ``/etc/pki/tls/certs/ca-bundle.crt`` from the
-   ``ca-certificates``on RH systems). Check the packages documentation to add a
-   new CA to those bundles.
-
-   If you are not installing request through the distribution packages (e.g.
-   via pip), it uses its own vendorized CA bundle, located in the distribution
-   directory (i.e. requests/cacert.pem). It should be enough to append the
-   correct certificates to the end of the cacert.pem file. In a virtualenv,
-   the bundle should be located at
-   ``$VIRTUAL_ENV/lib/python2.7/site-packages/requests/``
-
+   For an exhaustive list of available plugins please refer to the
+   `keystoneauth <http://docs.openstack.org/developer/keystoneauth/plugin-options.html#available-plugins>`_
+   documentation.
 
 ``[ssm]`` section
 -----------------
