@@ -19,6 +19,7 @@ import json
 
 import keystoneclient.v2_0.client
 from oslo_config import cfg
+from oslo_log import log
 import six
 
 opts = [
@@ -44,6 +45,8 @@ opts = [
 
 CONF = cfg.CONF
 CONF.register_opts(opts, group="extractor")
+
+LOG = log.getLogger(__name__)
 
 openstack_vm_statuses = {
     'active': 'started',
@@ -81,7 +84,16 @@ class BaseExtractor(object):
         else:
             self.voms_map = {}
             for vo, vomap in mapping.iteritems():
-                self.voms_map[vomap["tenant"]] = vo
+                tenant = vomap.get("tenant", None)
+                tenants = vomap.get("tenants", [])
+                if tenant is not None:
+                    LOG.warning("Using deprecated 'tenant' mapping, please "
+                                "use 'tenants' instead")
+                tenants.append(tenant)
+                if not tenants:
+                    LOG.warning("No tenant mapping found for VO %s" % tenant)
+                for tenant in tenants:
+                    self.voms_map[tenant] = vo
 
     def _get_keystone_client(self, tenant):
         client = keystoneclient.v2_0.client.Client(
