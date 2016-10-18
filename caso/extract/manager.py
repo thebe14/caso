@@ -84,7 +84,7 @@ class Manager(object):
                                                             extract_to)
             except Exception:
                 records = []
-                LOG.exception("Cannot extrat records for '%s'" % tenant)
+                LOG.exception("Cannot extract records for '%s'" % tenant)
             else:
                 LOG.info("Extracted %d records for tenant '%s' from "
                          "%s to %s" % (len(records), tenant, extract_from,
