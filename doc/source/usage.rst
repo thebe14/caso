@@ -37,8 +37,8 @@ of time.  If not time zone is specified, UTC will be used.
    Since nova is limiting the results to 1000 by default, if you are expecting
    more than 1000 results you will get just the last 1000.  This is important
    if you are publishing data for the first time, or if you are republishing
-   all your accounting). If this is your case, adjust the `osapi_max_limit` to
-   a larger value in `/etc/nova/nova.conf`.
+   all your accounting). If this is your case, adjust the ``osapi_max_limit``
+   to a larger value in ``/etc/nova/nova.conf``.
 
 Running as a cron job
 ---------------------
@@ -53,7 +53,7 @@ Migration from OSSSM
 If you had a previous installation of osssm, you can migrate to ``cASO``
 following these steps:
 
-#. Remove the previous osssm installation (e.g. remove apel-ssm-openstack rpm).
+#. Remove the previous osssm installation (e.g. remove ``apel-ssm-openstack`` rpm).
 #. Remove any cron jobs related to ``osssm.extract`` or ``osssm.push``, a single
    cron job as described above is enough. You should keep the cron job that executes
    ``ssmsend``, this is still needed to send the records to the accounting database.

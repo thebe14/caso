@@ -84,7 +84,8 @@ at the moment:
 ``[logstash]`` section
 ----------------------
 
-Options defined here configure the logstash messenger. Available options:
+Options defined here configure the `logstash <https://www.elastic.co/products/logstash>`_
+messenger. Available options:
 
 * ``host`` (default: ``localhost``), host of Logstash server.
 * ``port`` (default: ``5000``), Logstash server port.
