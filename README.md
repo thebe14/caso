@@ -1,4 +1,9 @@
-# caso [![Build Status](https://travis-ci.org/IFCA/caso.png)](https://travis-ci.org/IFCA/caso)
+# caso
+
+[![Travis](https://img.shields.io/travis/IFCA/caso.svg)](https://travis-ci.org/IFCA/caso)
+[![Coveralls](https://img.shields.io/coveralls/IFCA/caso.svg)](https://coveralls.io/github/IFCA/caso)
+[![PyPI](https://img.shields.io/pypi/v/caso.svg)](https://pypi.python.org/pypi/caso)
+[![Python versions](https://img.shields.io/pypi/pyversions/caso.svg)](https://pypi.python.org/pypi/caso)
 
 cASO is an OpenStack Accounting extractor.
 
@@ -8,6 +13,3 @@ cASO is an OpenStack Accounting extractor.
 
 Documentation (the source is in ``doc/source/``) is online at
 [caso documentation](https://caso.readthedocs.org/en/latest/).
-
-[Build Status]: https://travis-ci.org/IFCA/caso
-[BS img]: https://travis-ci.org/IFCA/caso.png
