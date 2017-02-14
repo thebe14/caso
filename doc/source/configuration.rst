@@ -19,6 +19,30 @@ Configuration
 OpenStack Configuration
 =======================
 
+Publishing benchmark information
+--------------------------------
+
+Starting with the V0.4 of the accounting record it is possible to publish
+benchmark information. In order to do so, you need to add this information to
+the flavor properties and configure caso to retrieve this information. There
+are two different values that need to be added to the flavor:
+
+* The benchmark name, indicated with the ``benchmark_name`` flavor property.
+* The benchmark value, indicated with the ``benchkark_value`` flavor property.
+
+So, if you are using HEPSPEC06 and the benchmark value is ``99`` for the flavor
+``m1.foo`` you should set this as follows::
+
+    openstack flavor set --property benchmark_name="HEPSPEC06" --property benchkark_value=99 m1.foo
+
+Using different keys
+~~~~~~~~~~~~~~~~~~~~
+
+If you do not want to use the default flavor properties ``benchmark_name`` and
+``benchkark_value`` (for example because you are using different benchmark types
+and values) you can specify which properties ``cASO`` should look for by using
+the ``benchmark_name_key`` ``benchkark_value_key`` in the configuration file.
+
 User credentials
 ----------------
 
@@ -84,6 +108,9 @@ of every option. You should check at least the following options:
             "tenants": ["foo", "bar"],
         }
     }
+* ``benchmark_name_key`` and ``benchmark_value_key``. These two configuration
+  options are used by ``cASO`` to retrieve the benchmark information form the
+  OpenStack flavors.
 
 ``[keystone_auth]`` section
 ---------------------------

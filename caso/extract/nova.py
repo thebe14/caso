@@ -20,6 +20,7 @@ import dateutil.parser
 import glanceclient.client
 import novaclient.client
 from oslo_config import cfg
+from oslo_log import log
 
 from caso.extract import base
 from caso.extract import utils
@@ -29,6 +30,10 @@ from caso import record
 CONF = cfg.CONF
 CONF.import_opt("extractor", "caso.extract.manager")
 CONF.import_opt("site_name", "caso.extract.manager")
+CONF.import_opt("benchmark_name_key", "caso.extract.manager")
+CONF.import_opt("benchmark_value_key", "caso.extract.manager")
+
+LOG = log.getLogger(__name__)
 
 
 class OpenStackExtractor(base.BaseExtractor):
@@ -67,6 +72,8 @@ class OpenStackExtractor(base.BaseExtractor):
         users = self._get_keystone_users(ks_client)
         project_id = nova.client.session.get_project_id()
 
+        flavors = {flavor.id: flavor for flavor in nova.flavors.list()}
+
         servers = nova.servers.list(search_opts={"changes-since": lastrun})
 
         servers = sorted(servers, key=operator.attrgetter("created"))
@@ -93,6 +100,24 @@ class OpenStackExtractor(base.BaseExtractor):
                     image_id = image.get("vmcatcher_event_ad_mpuri", None)
                     break
 
+            flavor = flavors.get(server.flavor["id"])
+            if flavor:
+                bench_name = flavor.get_keys().get(CONF.benchmark_name_key)
+                bench_value = flavor.get_keys().get(CONF.benchmark_value_key)
+            else:
+                bench_name = bench_value = None
+
+            if not all([bench_name, bench_value]):
+                if any([bench_name, bench_value]):
+                    LOG.warning("Benchmark for flavor %s not properly set" %
+                                flavor)
+                else:
+                    LOG.debug("Benchmark information for flavor %s not set,"
+                              "plase indicate the corret benchmark_name_key "
+                              "and benchmark_value_key in the configuration "
+                              "file or set the correct properties in the "
+                              "flavor.")
+
             if image_id is None:
                 image_id = server.image['id']
 
@@ -105,7 +130,9 @@ class OpenStackExtractor(base.BaseExtractor):
                                    compute_service=CONF.service_name,
                                    status=status,
                                    image_id=image_id,
-                                   user_dn=users.get(server.user_id, None))
+                                   user_dn=users.get(server.user_id, None),
+                                   benchmark_type=bench_name,
+                                   benchmark_value=bench_value)
             records[server.id] = r
 
         for usage in usages:

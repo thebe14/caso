@@ -42,6 +42,15 @@ opts = [
                deprecated_group="extractor",
                help='File containing the VO <-> project mapping as used '
                'in Keystone-VOMS.'),
+    cfg.StrOpt('benchmark_name_key',
+               default='benchmark_type',
+               help='Metadata key used to retrieve the benchmark type '
+                    'from the flavor properties.'),
+    cfg.StrOpt('benchmark_value_key',
+               default='benchmark_value',
+               help='Metadata key used to retrieve the benchmark value '
+                    'from the flavor properties.'),
+
 ]
 
 cli_opts = [
