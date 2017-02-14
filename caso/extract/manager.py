@@ -33,13 +33,14 @@ opts = [
     cfg.StrOpt('service_name',
                default='$site_name',
                help='Service name within the site'),
-    cfg.ListOpt('tenants',
+    cfg.ListOpt('projects',
                 default=[],
-                help='List of tenants to extract accounting records from.'),
+                deprecated_name='tenants',
+                help='List of projects to extract accounting records from.'),
     cfg.StrOpt('mapping_file',
                default='/etc/caso/voms.json',
                deprecated_group="extractor",
-               help='File containing the VO <-> tenant mapping as used '
+               help='File containing the VO <-> project mapping as used '
                'in Keystone-VOMS.'),
 ]
 
@@ -77,17 +78,17 @@ class Manager(object):
 
     def _extract(self, extract_from, extract_to):
         self.records = {}
-        for tenant in CONF.tenants:
+        for project in CONF.projects:
             try:
-                records = self.extractor.extract_for_tenant(tenant,
-                                                            extract_from,
-                                                            extract_to)
+                records = self.extractor.extract_for_project(project,
+                                                             extract_from,
+                                                             extract_to)
             except Exception:
                 records = []
-                LOG.exception("Cannot extract records for '%s'" % tenant)
+                LOG.exception("Cannot extract records for '%s'" % project)
             else:
-                LOG.info("Extracted %d records for tenant '%s' from "
-                         "%s to %s" % (len(records), tenant, extract_from,
+                LOG.info("Extracted %d records for project '%s' from "
+                         "%s to %s" % (len(records), project, extract_from,
                                        extract_to))
             self.records.update(records)
 

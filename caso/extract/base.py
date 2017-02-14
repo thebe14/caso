@@ -16,6 +16,7 @@
 
 import abc
 import json
+import warnings
 
 from oslo_config import cfg
 from oslo_log import log
@@ -67,21 +68,25 @@ class BaseExtractor(object):
                 tenant = vomap.get("tenant", None)
                 tenants = vomap.get("tenants", [])
                 if tenant is not None:
-                    LOG.warning("Using deprecated 'tenant' mapping, please "
-                                "use 'tenants' instead")
+                    warnings.warn("Using deprecated 'tenant' mapping, please "
+                                  "use 'projects' instead", DeprecationWarning)
+                if tenants:
+                    warnings.warn("Using deprecated 'tenants' mapping, please "
+                                  "use 'projects' instead", DeprecationWarning)
                 tenants.append(tenant)
-                if not tenants:
-                    LOG.warning("No tenant mapping found for VO %s" % tenant)
-                for tenant in tenants:
-                    self.voms_map[tenant] = vo
+                projects = vomap.get("projects", tenants)
+                if not projects:
+                    LOG.warning("No project mapping found for VO %s" % vo)
+                for project in projects:
+                    self.voms_map[project] = vo
 
-    def _get_keystone_client(self, tenant):
-        client = keystone_client.get_client(CONF, tenant)
+    def _get_keystone_client(self, project):
+        client = keystone_client.get_client(CONF, project)
         return client
 
     def _get_keystone_users(self, ks_client):
-        tenant_id = ks_client.tenant_id
-        users = ks_client.users.list(tenant_id=tenant_id)
+        project_id = ks_client.project_id
+        users = ks_client.users.list(project_id=project_id)
         return {u.id: u.name for u in users}
 
     def vm_status(self, status):
@@ -92,10 +97,10 @@ class BaseExtractor(object):
         return openstack_vm_statuses.get(status.lower(), 'unknown')
 
     @abc.abstractmethod
-    def extract_for_tenant(self, tenant, extract_from):
-        """Extract records for a tenant from given date.
+    def extract_for_project(self, project, extract_from):
+        """Extract records for a project from given date.
 
-        :param tenant: Tenant to extract records for.
+        :param project: Project to extract records for.
         :param extract_from: datetime.datetime object indicating the date to
                              extract records from
         :returns: A dictionary of {"server_id": caso.record.Record"}

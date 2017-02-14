@@ -30,15 +30,15 @@ opts = (loading.get_auth_common_conf_options() +
         loading.get_auth_plugin_conf_options('password'))
 
 
-def get_session(conf, tenant):
+def get_session(conf, project):
     """Get an auth session."""
     auth_plugin = loading.load_auth_from_conf_options(conf, CFG_GROUP,
-                                                      project_name=tenant)
+                                                      project_name=project)
     return loading.load_session_from_conf_options(conf, CFG_GROUP,
                                                   auth=auth_plugin)
 
 
-def get_client(conf, tenant):
+def get_client(conf, project):
     """Return a client for Keystone."""
-    sess = get_session(conf, tenant)
+    sess = get_session(conf, project)
     return ks_client_v3.Client(session=sess)

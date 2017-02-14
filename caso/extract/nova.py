@@ -35,20 +35,20 @@ class OpenStackExtractor(base.BaseExtractor):
     def __init__(self):
         super(OpenStackExtractor, self).__init__()
 
-    def _get_nova_client(self, tenant):
-        session = keystone_client.get_session(CONF, tenant)
+    def _get_nova_client(self, project):
+        session = keystone_client.get_session(CONF, project)
         return novaclient.client.Client(2, session=session)
 
-    def _get_glance_client(self, tenant):
-        session = keystone_client.get_session(CONF, tenant)
+    def _get_glance_client(self, project):
+        session = keystone_client.get_session(CONF, project)
         return glanceclient.client.Client(2, session=session)
 
-    def extract_for_tenant(self, tenant, lastrun, extract_to):
-        """Extract records for a tenant from given date querying nova.
+    def extract_for_project(self, project, lastrun, extract_to):
+        """Extract records for a project from given date querying nova.
 
         This method will get information from nova.
 
-        :param tenant: Tenant to extract records for.
+        :param project: Project to extract records for.
         :param extract_from: datetime.datetime object indicating the date to
                              extract records from
         :param extract_to: datetime.datetime object indicating the date to
@@ -61,11 +61,11 @@ class OpenStackExtractor(base.BaseExtractor):
         lastrun = lastrun.replace(tzinfo=None)
 
         # Try and except here
-        nova = self._get_nova_client(tenant)
-        glance = self._get_glance_client(tenant)
-        ks_client = self._get_keystone_client(tenant)
+        nova = self._get_nova_client(project)
+        glance = self._get_glance_client(project)
+        ks_client = self._get_keystone_client(project)
         users = self._get_keystone_users(ks_client)
-        tenant_id = nova.client.session.get_project_id()
+        project_id = nova.client.session.get_project_id()
 
         servers = nova.servers.list(search_opts={"changes-since": lastrun})
 
@@ -77,13 +77,13 @@ class OpenStackExtractor(base.BaseExtractor):
         else:
             start = lastrun
 
-        aux = nova.usage.get(tenant_id, start, extract_to)
+        aux = nova.usage.get(project_id, start, extract_to)
         usages = getattr(aux, "server_usages", [])
 
         images = glance.images.list()
         records = {}
 
-        vo = self.voms_map.get(tenant)
+        vo = self.voms_map.get(project)
 
         for server in servers:
             status = self.vm_status(server.status)

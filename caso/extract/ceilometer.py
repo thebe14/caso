@@ -31,8 +31,8 @@ class CeilometerExtractor(nova.OpenStackExtractor):
     def __init__(self):
         super(CeilometerExtractor, self).__init__()
 
-    def _get_ceilometer_client(self, tenant):
-        session = keystone_client.get_session(CONF, tenant)
+    def _get_ceilometer_client(self, project):
+        session = keystone_client.get_session(CONF, project)
         return ceilometerclient.client.get_client('2', session=session)
 
     def _build_query(self, project_id=None, start_date=None, end_date=None):
@@ -87,13 +87,13 @@ class CeilometerExtractor(nova.OpenStackExtractor):
                           # convert bytes to GB
                           unit_conv=lambda v: int(v / 2 ** 30))
 
-    def extract_for_tenant(self, tenant, lastrun, extract_to):
-        """Extract records for a tenant from given date.
+    def extract_for_project(self, project, lastrun, extract_to):
+        """Extract records for a project from given date.
 
         This method will get information from nova, and will enhance it with
         information from ceilometer.
 
-        :param tenant: Tenant to extract records for.
+        :param project: Project to extract records for.
         :param extract_from: datetime.datetime object indicating the date to
                              extract records from
         :param extract_to: datetime.datetime object indicating the date to
@@ -101,13 +101,13 @@ class CeilometerExtractor(nova.OpenStackExtractor):
         :returns: A dictionary of {"server_id": caso.record.Record"}
         """
         records = super(CeilometerExtractor,
-                        self).extract_for_tenant(tenant, lastrun, extract_to)
+                        self).extract_for_project(project, lastrun, extract_to)
         # Try and except here
-        ks_conn = self._get_keystone_client(tenant)
-        conn = self._get_ceilometer_client(tenant)
+        ks_conn = self._get_keystone_client(project)
+        conn = self._get_ceilometer_client(project)
         # See comment in nova.py, remove TZ from the dates.
         lastrun = lastrun.replace(tzinfo=None)
-        search_query = self._build_query(ks_conn.tenant_id, lastrun,
+        search_query = self._build_query(ks_conn.project_id, lastrun,
                                          extract_to)
 
         cpu = conn.samples.list(meter_name='cpu', q=search_query)

@@ -44,7 +44,7 @@ class TestCasoManager(base.TestCase):
         site_name = "site-foo"
         server_name = "name-foo"
         server_user_id = uuid.uuid4().hex
-        server_tenant_id = uuid.uuid4().hex
+        server_project_id = uuid.uuid4().hex
         fqan = "FooVO"
         status = 'completed'
         image_id = uuid.uuid4().hex
@@ -54,7 +54,7 @@ class TestCasoManager(base.TestCase):
             'FQAN': fqan,
             'GlobalUserName': user_dn,
             'ImageId': image_id,
-            'LocalGroupId': server_tenant_id,
+            'LocalGroupId': server_project_id,
             'LocalUserId': server_user_id,
             'MachineName': server_name,
             'SiteName': site_name,
@@ -89,7 +89,7 @@ class TestCasoManager(base.TestCase):
                                site_name,
                                server_name,
                                server_user_id,
-                               server_tenant_id,
+                               server_project_id,
                                fqan,
                                status=status,
                                image_id=image_id,

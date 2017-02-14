@@ -42,21 +42,21 @@ class TestCasoManager(base.TestCase):
 
         super(TestCasoManager, self).tearDown()
 
-    def test_extract_empty_tenants(self):
-        self.flags(tenants=[])
+    def test_extract_empty_projects(self):
+        self.flags(projects=[])
 
         with mock.patch.object(self.manager.extractor,
-                               "extract_for_tenant") as m:
+                               "extract_for_project") as m:
             self.manager._extract("1999-12-19", "2015-10-23")
             self.assertFalse(m.called)
         self.assertEqual({}, self.manager.records)
 
     def test_extract(self):
         records = {uuid.uuid4().hex: None}
-        self.flags(tenants=["bazonk"])
+        self.flags(projects=["bazonk"])
 
         with mock.patch.object(self.manager.extractor,
-                               "extract_for_tenant") as m:
+                               "extract_for_project") as m:
             m.return_value = records
             self.manager._extract("1999-12-19", "2015-12-19")
             m.assert_called_once_with("bazonk", "1999-12-19", "2015-12-19")
