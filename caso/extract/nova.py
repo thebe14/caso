@@ -17,6 +17,7 @@
 import operator
 
 import dateutil.parser
+import glanceclient.client
 import novaclient.client
 from oslo_config import cfg
 
@@ -38,6 +39,10 @@ class OpenStackExtractor(base.BaseExtractor):
         session = keystone_client.get_session(CONF, tenant)
         return novaclient.client.Client(2, session=session)
 
+    def _get_glance_client(self, tenant):
+        session = keystone_client.get_session(CONF, tenant)
+        return glanceclient.client.Client(2, session=session)
+
     def extract_for_tenant(self, tenant, lastrun, extract_to):
         """Extract records for a tenant from given date querying nova.
 
@@ -57,6 +62,7 @@ class OpenStackExtractor(base.BaseExtractor):
 
         # Try and except here
         nova = self._get_nova_client(tenant)
+        glance = self._get_glance_client(tenant)
         ks_client = self._get_keystone_client(tenant)
         users = self._get_keystone_users(ks_client)
         tenant_id = nova.client.session.get_project_id()
@@ -74,7 +80,7 @@ class OpenStackExtractor(base.BaseExtractor):
         aux = nova.usage.get(tenant_id, start, extract_to)
         usages = getattr(aux, "server_usages", [])
 
-        images = nova.images.list()
+        images = glance.images.list()
         records = {}
 
         vo = self.voms_map.get(tenant)
@@ -84,8 +90,7 @@ class OpenStackExtractor(base.BaseExtractor):
             image_id = None
             for image in images:
                 if image.id == server.image['id']:
-                    image_id = image.metadata.get("vmcatcher_event_ad_mpuri",
-                                                  None)
+                    image_id = image.get("vmcatcher_event_ad_mpuri", None)
                     break
 
             if image_id is None:
