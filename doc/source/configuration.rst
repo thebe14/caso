@@ -16,6 +16,39 @@
 Configuration
 *************
 
+OpenStack Configuration
+=======================
+
+User credentials
+----------------
+
+The user configured in the previous section has to be a member of each of the
+tenants (another option is to convert that user in an administrator, but the
+former option is a safer approach) for which it is extracting the accounting.
+Otherwise, ``cASO`` will not be able to get the usages and will fail::
+
+    openstack role create accounting
+    openstack user create --password <password> accounting
+    # For each of the tenants, add the user with the accounting role
+    openstack role add --user accounting --project <project> accounting
+
+Also, this user needs access to Keystone so as to extract the users
+information.
+
+* If you are using the V2 identity API, you have to give admin rights to the
+  ``accounting`` user, editing the ``/etc/keystone/policy.json`` file and
+  replacing the line::
+
+      "admin_required": "role:admin or is_admin:1 or",
+
+  with::
+
+      "admin_required": "role:admin or is_admin:1 or role:accounting",
+
+* If you are using the V3 identity API you can grant the user just the rights
+  for listing the users adding the appropriate rules in the
+  ``/etc/keystone/policy.json``.
+
 cASO configuration
 ==================
 
@@ -89,34 +122,3 @@ messenger. Available options:
 
 * ``host`` (default: ``localhost``), host of Logstash server.
 * ``port`` (default: ``5000``), Logstash server port.
-
-
-OpenStack Configuration
-=======================
-
-The user configured in the previous section has to be a member of each of the
-tenants (another option is to convert that user in an administrator, but the
-former option is a safer approach) for which it is extracting the accounting.
-Otherwise, ``cASO`` will not be able to get the usages and will fail::
-
-    keystone role-create --name accounting
-    keystone user-create --name accounting --pass <password>
-    # For each of the tenants, add the user with the accounting role
-    keystone user-role-add --user accounting --role accounting --tenant <tenant>
-
-Also, this user needs access to Keystone so as to extract the users
-information.
-
-* If you are using the V2 identity API, you have to give admin rights to the
-  ``accounting`` user, editing the ``/etc/keystone/policy.json`` file and
-  replacing the line::
-
-      "admin_required": "role:admin or is_admin:1 or",
-
-  with::
-
-      "admin_required": "role:admin or is_admin:1 or role:accounting",
-
-* If you are using the V3 identity API you can grant the user just the rights
-  for listing the users adding the appropriate rules in the
-  ``/etc/keystone/policy.json``.
