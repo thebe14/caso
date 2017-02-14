@@ -79,6 +79,7 @@ class Manager(object):
     def _extract(self, extract_from, extract_to):
         self.records = {}
         for project in CONF.projects:
+            LOG.info("Extracting records for project '%s'" % project)
             try:
                 records = self.extractor.extract_for_project(project,
                                                              extract_from,
