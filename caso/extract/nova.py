@@ -87,7 +87,7 @@ class OpenStackExtractor(base.BaseExtractor):
         aux = nova.usage.get(project_id, start, extract_to)
         usages = getattr(aux, "server_usages", [])
 
-        images = glance.images.list()
+        images = {image.id: image for image in glance.images.list()}
         records = {}
 
         vo = self.voms_map.get(project)
@@ -95,10 +95,12 @@ class OpenStackExtractor(base.BaseExtractor):
         for server in servers:
             status = self.vm_status(server.status)
             image_id = None
-            for image in images:
-                if image.id == server.image['id']:
-                    image_id = image.get("vmcatcher_event_ad_mpuri", None)
-                    break
+            if server.image:
+                image = images.get(server.image['id'])
+                image_id = server.image['id']
+                if image:
+                    if image.get("vmcatcher_event_ad_mpuri", None) is not None:
+                        image_id = image.get("vmcatcher_event_ad_mpuri", None)
 
             flavor = flavors.get(server.flavor["id"])
             if flavor:
@@ -117,9 +119,6 @@ class OpenStackExtractor(base.BaseExtractor):
                               "and benchmark_value_key in the configuration "
                               "file or set the correct properties in the "
                               "flavor.")
-
-            if image_id is None:
-                image_id = server.image['id']
 
             r = record.CloudRecord(server.id,
                                    CONF.site_name,
