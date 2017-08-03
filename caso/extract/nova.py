@@ -122,7 +122,8 @@ class OpenStackExtractor(base.BaseExtractor):
         # Iter over results until we do not have more to get
         while True:
             aux = nova.servers.list(
-                search_opts={"changes-since": extract_from},
+                search_opts={"changes-since": extract_from,
+                             "deleted": True},
                 limit=limit,
                 marker=marker
             )
@@ -134,6 +135,10 @@ class OpenStackExtractor(base.BaseExtractor):
 
         servers = sorted(servers, key=operator.attrgetter("created"))
 
+        # We are going to query for the sever usages below. It will return the
+        # usages for the specified period. However, usages should be absolute
+        # values, not deltas. Therefore we need to change the start time for
+        # the query with that of the oldest server.
         if servers:
             start = dateutil.parser.parse(servers[0].created)
             start = start.replace(tzinfo=None)
@@ -149,18 +154,16 @@ class OpenStackExtractor(base.BaseExtractor):
         vo = self.voms_map.get(project)
 
         for server in servers:
+            server_start = dateutil.parser.parse(server.created)
+            server_start = server_start.replace(tzinfo=None)
+            if server_start > extract_to:
+                continue
             records[server.id] = self.build_record(server, vo, images,
                                                    flavors, users)
 
         for usage in usages:
             if usage["instance_id"] not in records:
-                try:
-                    server = nova.servers.get(usage["instance_id"])
-                except novaclient.exceptions.ClientException:
-                    # Maybe the instance is completely missing
-                    continue
-                records[server.id] = self.build_record(server, vo, images,
-                                                       flavors, users)
+                continue
             instance_id = usage["instance_id"]
             records[instance_id].memory = usage["memory_mb"]
             records[instance_id].cpu_count = usage["vcpus"]
