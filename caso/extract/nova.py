@@ -277,8 +277,8 @@ class OpenStackExtractor(base.BaseExtractor):
                     # If we are republishing, the machine reports status
                     # completed, but it is not True for this period, so we need
                     # to fake the status
-                    if records[server.id].status == "completed":
-                        records[server.id].status = self.vm_status("active")
+                    if record.status == "completed":
+                        record.status = self.vm_status("active")
 
                 cput = wall * usage["vcpus"]
                 record.cpu_duration = cput
