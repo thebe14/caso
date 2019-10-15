@@ -243,7 +243,17 @@ class OpenStackExtractor(base.BaseExtractor):
         for usage in usages:
             # 4.1 and 4.2 Get the server if it is not yet there
             if usage["instance_id"] not in records:
-                server = nova.servers.get(usage["instance_id"])
+                try:
+                    server = nova.servers.get(usage["instance_id"])
+                except novaclient.exceptions.ClientException as e:
+                    LOG.error("Cannot get server '%s' from the Nova API, "
+                              "probably because it is an old VM that whose "
+                              "metadata is wrong in the DB. There will be no "
+                              "record generated for this VM. " %
+                              usage["instance_id"])
+                    LOG.exception(e)
+
+                    continue
 
                 server_start = self._get_server_start(server)
                 if server_start > extract_to:
