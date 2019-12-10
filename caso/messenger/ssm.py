@@ -31,6 +31,9 @@ opts = [
     cfg.StrOpt('output_path',
                default='/var/spool/apel/outgoing/openstack',
                help="Directory to put the generated SSM records."),
+    cfg.IntOpt('max_size',
+               default=100,
+               help="Maximum number of records to send per message"),
 ]
 
 CONF = cfg.CONF
@@ -63,14 +66,18 @@ class _SSMBaseMessenger(caso.messenger.BaseMessenger):
                     aux += "%s: %s\n" % (k, v)
             entries.append(aux)
 
-        message = "%s\n" % self.header
-
-        sep = "%s\n" % self.separator
-        message += "%s" % sep.join(entries)
-
         # FIXME(aloga): try except here
         queue = dirq.QueueSimple.QueueSimple(CONF.ssm.output_path)
-        queue.add(message)
+
+        # Divide message into smaller chunks as per GGUS #143436
+        # https://ggus.eu/index.php?mode=ticket_info&ticket_id=143436
+        for i in range(0, len(entries), CONF.ssm.max_size):
+            message = "%s\n" % self.header
+
+            sep = "%s\n" % self.separator
+            message += "%s" % sep.join(entries[i:i + CONF.ssm.max_size])
+
+            queue.add(message)
 
 
 class SSMMessengerV02(_SSMBaseMessenger):

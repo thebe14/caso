@@ -294,3 +294,6 @@
 
 # Directory to put the generated SSM records. (string value)
 #output_path = /var/spool/apel/outgoing/openstack
+
+# Maximum number of records to send per message (integer value)
+#max_size = 100
