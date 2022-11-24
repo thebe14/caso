@@ -18,7 +18,9 @@ import stevedore
 
 from caso import exception
 
-EXTRACTOR_NAMESPACE = "caso.extractors"
+
+# Namespaces in file setup.cfg
+EXTRACTOR_NAMESPACE = "caso.extractor"
 MESSENGER_NAMESPACE = "caso.messenger"
 
 

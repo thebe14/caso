@@ -38,6 +38,7 @@ nosetests.xml
 # Complexity
 output/*.html
 output/*/index.html
+spool/*
 
 # Sphinx
 doc/build
@@ -50,4 +51,5 @@ ChangeLog
 *~
 .*.swp
 
-etc/caso.conf
+etc/caso/caso.conf
+etc/caso/voms.json

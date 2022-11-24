@@ -1,0 +1,15 @@
+APEL-cloud-message: v0.4
+SiteName: IFCA-LCG2
+CloudComputeService: IFCA-LCG2
+VMUUID: 966d49a2-81ac-4301-9d92-d68c7dfbc75a
+MachineName: EGI_CentOS_8-161470352152
+LocalUserId: 5bd063142ec146a1ba93b794eaded9d2
+LocalGroupId: 999f045c-b1ff-4684-a15e-bb338af69460
+FQAN: vo.access.egi.eu
+Status: started
+StartTime: 2021-03-02 16:45:28
+ImageId: 3366a28b-97a4-48c2-b2e3-1a6450494f25
+CpuCount: 8
+Memory: 15000
+Disk: 60
+PublicIPCount: 1

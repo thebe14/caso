@@ -1,0 +1,16 @@
+<sr:StorageUsageRecords xmlns:sr="http://eu-emi.eu/namespaces/2011/02/storagerecord">
+    <sr:StorageUsageRecord>
+        <sr:RecordIdentity sr:createTime="2022-11-18T13:08:27.371580"
+                           sr:recordId="d692f012-8c0e-4996-86ef-8c34526d1c3f" />
+        <sr:StorageSystem>IFCA-LCG2</sr:StorageSystem>
+        <sr:Site>IFCA-LCG2</sr:Site>
+        <sr:SubjectIdentity>
+            <sr:LocalUser>47d1e6653a13480eae8abeded0793451</sr:LocalUser>
+            <sr:LocalGroup>999f045cb1ff4684a15ebb338af69460</sr:LocalGroup>
+            <sr:Group>vo.access.egi.eu</sr:Group>
+        </sr:SubjectIdentity>
+        <sr:StartTime>2022-11-10T00:00:00</sr:StartTime>
+        <sr:EndTime>2022-11-18T13:08:27.371580</sr:EndTime>
+        <sr:ResourceCapacityUsed>10737418240</sr:ResourceCapacityUsed>
+    </sr:StorageUsageRecord>
+</sr:StorageUsageRecords>

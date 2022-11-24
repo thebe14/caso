@@ -1,0 +1,38 @@
+{
+    "configurations": [
+        {
+            "name": "Nova Extractor",
+            "type": "python",
+            "request": "launch",
+            "module": "caso.cmd.extract",
+            "args" : ["--config-dir", "etc\\caso", "--extractor", "nova", "--extract-from", "2022-11-10"],
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "stopOnEntry": false
+        },
+        {
+            "name": "Cinder Extractor",
+            "type": "python",
+            "request": "launch",
+            "module": "caso.cmd.extract",
+            "args" : ["--config-dir", "etc\\caso", "--extractor", "cinder", "--extract-from", "2022-11-10"],
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "stopOnEntry": false
+        },
+        {
+            "name": "Neutron Extractor",
+            "type": "python",
+            "request": "launch",
+            "module": "caso.cmd.extract",
+            "args" : ["--config-dir", "etc\\caso", "--extractor", "neutron", "--extract-from", "2022-11-10"],
+            "env": {
+              "EGI_VO": "vo.access.egi.eu",
+              "SITE": "IFCA-LCG2"
+            },
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "stopOnEntry": false
+        }
+    ]
+}
