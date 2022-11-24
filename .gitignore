@@ -36,8 +36,7 @@ nosetests.xml
 .pydevproject
 
 # Complexity
-output/*.html
-output/*/index.html
+output/*
 spool/*
 
 # Sphinx
