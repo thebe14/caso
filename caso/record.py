@@ -43,7 +43,7 @@ class CloudRecord(BaseRecord):
     This class is versioned, following the Cloud Accounting Record versions.
     """
 
-    version: str = "0.4"
+    version = "0.4"
 
     uuid: uuid.UUID
     name: str
@@ -251,26 +251,30 @@ class StorageRecord(BaseRecord):
     EMI StAR
     """
 
-    version: str = "0.1"
+    version = "0.1"
 
+    # Fields serialized in the accounting record
     uuid: uuid.UUID
-    name: str
 
     user_id: str
     user_dn: typing.Optional[str]
     group_id: str
     fqan: str
 
+    start_time: datetime.datetime
+    measure_time: datetime.datetime
+
+    storage_media: typing.Optional[str]
+    storage_class: typing.Optional[str]
+
+    capacity: int # GiB
+
+    # Extra field not serialized in the accounting record
+    name: str
+    status: str
     active_duration: int
     attached_duration: typing.Optional[float]
     attached_to: typing.Optional[str]
-    measure_time: datetime.datetime
-    start_time: datetime.datetime
-
-    storage_type: typing.Optional[str] = "Block Storage (cinder)"
-
-    status: str
-    capacity: int
 
     # (aidaph) Fix the return to something different to 0
     @pydantic.validator("attached_duration", always=True)
@@ -294,7 +298,9 @@ class StorageRecord(BaseRecord):
                 "capacity": "Capacity",
                 "active_duration": "ActiveDuration",
                 "start_time": "StartTime",
-                "storage_type": "Type",
+                "storage_media": "Media",
+                "storage_class": "Class",
+                "encrypted": "Encrypted",
                 "status": "Status",
                 "attached_to": "AttachedTo",
                 "attached_duration": "AttachedDuration",

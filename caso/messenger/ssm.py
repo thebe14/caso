@@ -52,8 +52,11 @@ __all__ = ["SSMMessengerV02", "SSMMessengerV04"]
 class _SSMBaseMessenger(caso.messenger.BaseMessenger):
 
     def __init__(self):
-        # FIXME(aloga): try except here
-        utils.makedirs(CONF.ssm.output_path)
+        try:
+            utils.makedirs(CONF.ssm.output_path)
+        except Exception as err:
+            LOG.error(f"Failed to create path {CONF.ssm.output_path} because {err}")
+            
 
     def push_compute_message(self, queue, entries):
         message = f"APEL-cloud-message: v{self.compute_version}\n"
@@ -106,6 +109,10 @@ class _SSMBaseMessenger(caso.messenger.BaseMessenger):
                           "sr:StartTime").text = record.start_time.isoformat()
             ET.SubElement(sr,
                           "sr:EndTime").text = record.measure_time.isoformat()
+            if record.storage_media:
+                ET.SubElement(sr, "sr:StorageMedia").text = record.storage_media
+            if record.storage_class:
+                ET.SubElement(sr, "sr:StorageClass").text = record.storage_class
             capacity = str(int(record.capacity * 1073741824))   # 1 GiB = 2^30
             ET.SubElement(sr, "sr:ResourceCapacityUsed").text = capacity
         queue.add(ET.tostring(root))
@@ -117,7 +124,7 @@ class _SSMBaseMessenger(caso.messenger.BaseMessenger):
         entries_cloud = []
         entries_ip = []
         entries_acc = []
-        entries_str = []
+        entries_storage = []
         opts = {
             "by_alias": True,
             "exclude_unset": True,
@@ -135,9 +142,9 @@ class _SSMBaseMessenger(caso.messenger.BaseMessenger):
             elif isinstance(record, caso.record.AcceleratorRecord):
                 entries_acc.append(record.json(**opts))
             elif isinstance(record, caso.record.StorageRecord):
-                entries_str.append(record)
+                entries_storage.append(record)
             else:
-                raise caso.exception.CasoException("Unexpected record format!")
+                raise caso.exception.CasoException("Unexpected record type!")
 
         # FIXME(aloga): try except here
         queue = dirq.QueueSimple.QueueSimple(CONF.ssm.output_path)
@@ -156,8 +163,8 @@ class _SSMBaseMessenger(caso.messenger.BaseMessenger):
             entries = entries_acc[i:i + CONF.ssm.max_size]
             self.push_acc_message(queue, entries)
 
-        for i in range(0, len(entries_str), CONF.ssm.max_size):
-            entries = entries_str[i:i + CONF.ssm.max_size]
+        for i in range(0, len(entries_storage), CONF.ssm.max_size):
+            entries = entries_storage[i:i + CONF.ssm.max_size]
             self.push_storage_message(queue, entries)
 
 

@@ -11,6 +11,8 @@
         </sr:SubjectIdentity>
         <sr:StartTime>2022-11-10T00:00:00</sr:StartTime>
         <sr:EndTime>2022-11-18T13:08:27.371580</sr:EndTime>
+        <sr:StorageMedia>rbd</sr:StorageMedia>
+        <sr:StorageClass>encrypted</sr:StorageClass>
         <sr:ResourceCapacityUsed>10737418240</sr:ResourceCapacityUsed>
     </sr:StorageUsageRecord>
 </sr:StorageUsageRecords>

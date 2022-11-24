@@ -42,6 +42,12 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
         session = self._get_keystone_session()
         return cinderclient.v3.client.Client(session=session)
 
+    def append_qualifier(self, qualifiers, qualifier):
+        if qualifiers:
+            return qualifiers + "," + qualifier
+
+        return qualifier
+
     def build_record(self, volume, extract_from, extract_to):
         user = self.users[volume.user_id]
         measure_time = self._get_measure_time()
@@ -66,18 +72,21 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
             measure_time=measure_time,
             start_time=vol_created,
             capacity=volume.size,
-            user_dn=user
+            user_dn=user,
+            storage_media=volume.volume_type
         )
 
         if volume.status == "in-use":
-            attached_to = volume.attachments[0]["server_id"]
+            r.attached_to = volume.attachments[0]["server_id"]
             attached_at = volume.attachments[0]["attached_at"]
             attached_at = dateutil.parser.parse(attached_at)
             if (attached_at < extract_from):
                 attached_at = extract_from
             attacht = (extract_to - attached_at).total_seconds()
             r.attached_duration = attacht
-            r.attached_to = attached_to
+
+        if volume.encrypted:
+            r.storage_class = self.append_qualifier(r.storage_class, "encrypted")
 
         return r
 
