@@ -50,11 +50,6 @@ __all__ = ["SSMMessengerV02", "SSMMessengerV04"]
 
 @six.add_metaclass(abc.ABCMeta)
 class _SSMBaseMessenger(caso.messenger.BaseMessenger):
-    # FIXME(aloga): versions are not anymore used
-    compute_version = None
-    ip_version = None
-    acc_version = None
-    str_version = None
 
     def __init__(self):
         # FIXME(aloga): try except here
@@ -83,7 +78,7 @@ class _SSMBaseMessenger(caso.messenger.BaseMessenger):
         self.push_json_message(queue, entries, "APEL-accelerator-message",
                                self.acc_version)
 
-    def push_str_message(self, queue, entries):
+    def push_storage_message(self, queue, entries):
         ns = {
             "xmlns:sr": "http://eu-emi.eu/namespaces/2011/02/storagerecord"
         }
@@ -163,12 +158,10 @@ class _SSMBaseMessenger(caso.messenger.BaseMessenger):
 
         for i in range(0, len(entries_str), CONF.ssm.max_size):
             entries = entries_str[i:i + CONF.ssm.max_size]
-            self.push_str_message(queue, entries)
+            self.push_storage_message(queue, entries)
 
 
 class SSMMessengerV02(_SSMBaseMessenger):
-    compute_version = "0.2"
-
     def __init__(self):
         msg = ("Using deprecated caso.messenger.ssm.SSMMessengerV02, "
                "please use caso.messenger.ssm.SSMMessengerV04 instead.")
@@ -177,6 +170,5 @@ class SSMMessengerV02(_SSMBaseMessenger):
 
 
 class SSMMessengerV04(_SSMBaseMessenger):
-    compute_version = "0.4"
-    ip_version = "0.2"
-    acc_version = "0.1"
+    def __init__(self):
+        super(SSMMessengerV04, self).__init__()
