@@ -267,7 +267,8 @@ class StorageRecord(BaseRecord):
     storage_media: typing.Optional[str]
     storage_class: typing.Optional[str]
 
-    capacity: int # GiB
+    capacity: int # bytes
+    objects: typing.Optional[int]
 
     # Extra field not serialized in the accounting record
     name: str
@@ -282,6 +283,14 @@ class StorageRecord(BaseRecord):
         if value is not None:
             return value
         return 0
+
+    def add_storage_class(self, sclass):
+        if self.storage_class:
+            self.storage_class = self.storage_class + ","
+
+        self.storage_class = self.storage_class + sclass
+
+        return self.storage_class
 
     class Config:
         @staticmethod

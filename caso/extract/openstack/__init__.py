@@ -105,12 +105,6 @@ class BaseOpenStackExtractor(base.BaseProjectExtractor):
                         f"'{self.project}', please check mapping file!")
         return vo
 
-    def append_qualifier(self, qualifiers, qualifier):
-        if qualifiers:
-            return qualifiers + "," + qualifier
-
-        return qualifier
-
     # FIXME(aloga): this has to go inside a record
     @staticmethod
     def _get_measure_time():

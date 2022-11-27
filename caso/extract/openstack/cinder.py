@@ -46,12 +46,12 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
         user = self.users[volume.user_id]
         measure_time = self._get_measure_time()
 
-        vol_start = volume.__getattr__('created_at')
-        vol_created = dateutil.parser.parse(vol_start)
-        if (vol_created < extract_from):
-            vol_created = extract_from
+        vol_created = volume.__getattr__('created_at')
+        vol_start = dateutil.parser.parse(vol_created)
+        if (vol_start < extract_from):
+            vol_start = extract_from
 
-        active_duration = (extract_to - vol_created).total_seconds()
+        active_duration = (extract_to - vol_start).total_seconds()
 
         r = record.StorageRecord(
             uuid=volume.id,
@@ -64,8 +64,8 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
             status=volume.status,
             active_duration=active_duration,
             measure_time=measure_time,
-            start_time=vol_created,
-            capacity=volume.size,
+            start_time=vol_start,
+            capacity=int(volume.size * 1073741824), # 1 GiB = 2^30
             user_dn=user,
             storage_media=volume.volume_type
         )
@@ -80,7 +80,7 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
             r.attached_duration = attacht
 
         if volume.encrypted:
-            r.storage_class = self.append_qualifier(r.storage_class, "encrypted")
+            r.add_storage_class("encrypted")
 
         return r
 
