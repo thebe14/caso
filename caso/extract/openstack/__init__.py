@@ -29,7 +29,7 @@ opts = [
     cfg.StrOpt('region_name',
                default=None,
                help='OpenStack Region to use. This option will force cASO to '
-                    'extract records from a specific OpenStack Region, in '
+                    'extract records from a specific OpenStack Region, if '
                     'there are several defined in the OpenStack site. '
                     'Defaults to None.')
 ]
@@ -104,6 +104,12 @@ class BaseOpenStackExtractor(base.BaseProjectExtractor):
             LOG.warning("No mapping could be found for project "
                         f"'{self.project}', please check mapping file!")
         return vo
+
+    def append_qualifier(self, qualifiers, qualifier):
+        if qualifiers:
+            return qualifiers + "," + qualifier
+
+        return qualifier
 
     # FIXME(aloga): this has to go inside a record
     @staticmethod

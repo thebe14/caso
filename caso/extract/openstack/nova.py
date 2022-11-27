@@ -356,9 +356,9 @@ class NovaExtractor(openstack.BaseOpenStackExtractor):
             record.disk = usage["local_gb"]
 
     def extract(self, extract_from, extract_to):
-        """Extract records for a project from given date querying nova.
+        """Extract records for a project from given date querying compute.
 
-        This method will get information from nova.
+        This method will get information from Nova.
 
         :param project: Project to extract records for.
         :param extract_from: datetime.datetime object indicating the date to
@@ -380,7 +380,7 @@ class NovaExtractor(openstack.BaseOpenStackExtractor):
         # We cannot use just 'changes-since' in the servers.list() API query,
         # as it will only include servers that have changed its status after
         # that date. However we cannot just get all the usages and then query
-        # server by server, as deleted servers are not returned  by the usages
+        # server by server, as deleted servers are not returned by the usages
         # call. Moreover, Nova resets the start_time after performing some
         # actions on the server (rebuild, resize, rescue). If we use that time,
         # we may get a drop in the wall time, as a server that has been resized

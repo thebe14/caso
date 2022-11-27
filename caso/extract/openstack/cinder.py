@@ -42,12 +42,6 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
         session = self._get_keystone_session()
         return cinderclient.v3.client.Client(session=session)
 
-    def append_qualifier(self, qualifiers, qualifier):
-        if qualifiers:
-            return qualifiers + "," + qualifier
-
-        return qualifier
-
     def build_record(self, volume, extract_from, extract_to):
         user = self.users[volume.user_id]
         measure_time = self._get_measure_time()
@@ -97,7 +91,6 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
         # Use a marker and iter over results until we do not have more to get
         while True:
             aux = self.cinder.volumes.list(
-                search_opts={"changes-since": extract_from},
                 limit=limit,
                 marker=marker
             )
@@ -111,9 +104,9 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
         return volumes
 
     def extract(self, extract_from, extract_to):
-        """Extract records for a project from given date querying cinder.
+        """Extract records for a project from given date querying block store.
 
-        This method will get information from cinder.
+        This method will get information from Cinder.
 
         :param extract_from: datetime.datetime object indicating the date to
                              extract records from

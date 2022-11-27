@@ -69,9 +69,9 @@ class NeutronExtractor(openstack.BaseOpenStackExtractor):
         return ips
 
     def extract(self, extract_from, extract_to):
-        """Extract records for a project from given date querying nova.
+        """Extract records for a project from given date querying networking.
 
-        This method will get information from nova.
+        This method will get information from Neutron.
 
         :param project: Project to extract records for.
         :param extract_from: datetime.datetime object indicating the date to
