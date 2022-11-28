@@ -44,12 +44,15 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
 
     def build_record(self, volume, extract_from, extract_to):
         user = self.users[volume.user_id]
-        measure_time = self._get_measure_time()
 
         vol_created = volume.__getattr__('created_at')
-        vol_start = dateutil.parser.parse(vol_created)
-        if (vol_start < extract_from):
+        vol_start = None
+        if not vol_created:
             vol_start = extract_from
+        else:
+            vol_start = dateutil.parser.parse(vol_created)
+            if (vol_start < extract_from):
+                vol_start = extract_from    
 
         active_duration = (extract_to - vol_start).total_seconds()
 
@@ -63,7 +66,7 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
             compute_service=CONF.service_name,
             status=volume.status,
             active_duration=active_duration,
-            measure_time=measure_time,
+            measure_time=self._get_measure_time(),
             start_time=vol_start,
             capacity=int(volume.size * 1073741824), # 1 GiB = 2^30
             user_dn=user,
@@ -90,15 +93,19 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
         marker = None
         # Use a marker and iter over results until we do not have more to get
         while True:
-            aux = self.cinder.volumes.list(
-                limit=limit,
-                marker=marker
-            )
-            volumes.extend(aux)
+            try:
+                aux = self.cinder.volumes.list(
+                    limit=limit,
+                    marker=marker
+                )
+                volumes.extend(aux)
 
-            if len(aux) < limit:
+                if len(aux) < limit:
+                    break
+                marker = aux[-1].id
+            except Exception as err:
+                print(f"Failed to list volumes: {err}")
                 break
-            marker = aux[-1].id
 
         volumes = sorted(volumes, key=operator.attrgetter("created_at"))
         return volumes
@@ -126,8 +133,7 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
         volumes = self._get_volumes(extract_from)
 
         for vol in volumes:
-            self.str_records[vol.id] = self.build_record(vol,
-                                                         extract_from,
-                                                         extract_to)
+            record = self.build_record(vol, extract_from, extract_to)
+            self.str_records[vol.uuid] = record
 
         return list(self.str_records.values())
