@@ -70,7 +70,7 @@ class SwiftExtractor(openstack.BaseOpenStackExtractor):
             fqan = self.vo,
             compute_service = CONF.service_name,
             #status=volume.status,
-            active_duration=active_duration,
+            active_duration=int(active_duration),
             measure_time = self._get_measure_time(),
             start_time = cont_start,
             capacity = container["bytes_used"],
@@ -84,7 +84,7 @@ class SwiftExtractor(openstack.BaseOpenStackExtractor):
 
     def _get_containers(self, extract_from):
         containers = []
-        limit = 2
+        limit = 200
         marker = None
 
         # Use a marker and iter over results until we do not have more to get
@@ -101,7 +101,8 @@ class SwiftExtractor(openstack.BaseOpenStackExtractor):
                 if len(cont_list) < limit:
                     break
 
-                marker = cont_list[-1]["name"]
+                last_cont = cont_list[-1]
+                marker = last_cont["name"]
             except Exception as err:
                 print(f"Failed to list containers: {err}")
                 break
