@@ -55,8 +55,6 @@ class SwiftExtractor(openstack.BaseOpenStackExtractor):
         return client
 
     def build_record(self, container, extract_from, extract_to):
-        user = self.users[container["account"]]
-
         cont_start = extract_from
         active_duration = (extract_to - cont_start).total_seconds()
 
@@ -64,12 +62,9 @@ class SwiftExtractor(openstack.BaseOpenStackExtractor):
             uuid = os.path.join(self.project_id, container["container"]),
             site_name = CONF.site_name,
             name = container["container"],
-            #user_dn=user,
-            #user_id=volume.user_id,
             group_id = self.project_id,
             fqan = self.vo,
             compute_service = CONF.service_name,
-            #status=volume.status,
             active_duration=int(active_duration),
             measure_time = self._get_measure_time(),
             start_time = cont_start,
