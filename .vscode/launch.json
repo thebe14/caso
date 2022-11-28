@@ -21,6 +21,16 @@
             "stopOnEntry": false
         },
         {
+            "name": "Swift Extractor",
+            "type": "python",
+            "request": "launch",
+            "module": "caso.cmd.extract",
+            "args" : ["--config-dir", "etc\\caso", "--extractor", "swift", "--extract-from", "2022-11-10"],
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "stopOnEntry": false
+        },
+        {
             "name": "Neutron Extractor",
             "type": "python",
             "request": "launch",

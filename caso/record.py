@@ -254,9 +254,9 @@ class StorageRecord(BaseRecord):
     version = "0.1"
 
     # Fields serialized in the accounting record
-    uuid: uuid.UUID
+    uuid: str
 
-    user_id: str
+    user_id: typing.Optional[str]
     user_dn: typing.Optional[str]
     group_id: str
     fqan: str
@@ -272,9 +272,9 @@ class StorageRecord(BaseRecord):
 
     # Extra field not serialized in the accounting record
     name: str
-    status: str
+    status: typing.Optional[str]
     active_duration: int
-    attached_duration: typing.Optional[float]
+    attached_duration: typing.Optional[int]
     attached_to: typing.Optional[str]
 
     # (aidaph) Fix the return to something different to 0
@@ -286,9 +286,9 @@ class StorageRecord(BaseRecord):
 
     def add_storage_class(self, sclass):
         if self.storage_class:
-            self.storage_class = self.storage_class + ","
-
-        self.storage_class = self.storage_class + sclass
+            self.storage_class = self.storage_class + "," + sclass
+        else:
+            self.storage_class = sclass
 
         return self.storage_class
 
@@ -305,6 +305,7 @@ class StorageRecord(BaseRecord):
                 "fqan": "FQAN",
                 "site_name": "SiteName",
                 "capacity": "Capacity",
+                "objects": "Objects",
                 "active_duration": "ActiveDuration",
                 "start_time": "StartTime",
                 "storage_media": "Media",

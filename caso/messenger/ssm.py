@@ -98,13 +98,18 @@ class _SSMBaseMessenger(caso.messenger.BaseMessenger):
             )
             ET.SubElement(sr, "sr:StorageSystem").text = record.compute_service
             ET.SubElement(sr, "sr:Site").text = record.site_name
-            subject = ET.SubElement(sr, "sr:SubjectIdentity")
-            ET.SubElement(subject, "sr:LocalUser").text = record.user_id
-            ET.SubElement(subject, "sr:LocalGroup").text = record.group_id
-            if record.user_dn:
-                ET.SubElement(subject, "sr:UserIdentity").text = record.user_dn
-            if record.fqan:
-                ET.SubElement(subject, "sr:Group").text = record.fqan
+
+            if any((record.user_id, record.user_dn)):
+                subject = ET.SubElement(sr, "sr:SubjectIdentity")
+                if record.user_id:
+                    ET.SubElement(subject, "sr:LocalUser").text = record.user_id
+                if record.group_id:
+                    ET.SubElement(subject, "sr:LocalGroup").text = record.group_id
+                if record.user_dn:
+                    ET.SubElement(subject, "sr:UserIdentity").text = record.user_dn
+                if record.fqan:
+                    ET.SubElement(subject, "sr:Group").text = record.fqan
+
             ET.SubElement(sr,
                           "sr:StartTime").text = record.start_time.isoformat()
             ET.SubElement(sr,
@@ -113,8 +118,10 @@ class _SSMBaseMessenger(caso.messenger.BaseMessenger):
                 ET.SubElement(sr, "sr:StorageMedia").text = record.storage_media
             if record.storage_class:
                 ET.SubElement(sr, "sr:StorageClass").text = record.storage_class
-            capacity = str(int(record.capacity * 1073741824))   # 1 GiB = 2^30
-            ET.SubElement(sr, "sr:ResourceCapacityUsed").text = capacity
+            capacity = str(record.capacity)
+            ET.SubElement(sr, "sr:ResourceCapacityUsed").text = str(capacity)
+            if record.objects:
+                ET.SubElement(sr, "sr:FileCount").text = str(record.objects)
         queue.add(ET.tostring(root))
 
     def push(self, records):

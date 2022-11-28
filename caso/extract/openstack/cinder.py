@@ -40,7 +40,8 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
 
     def _get_cinder_client(self):
         session = self._get_keystone_session()
-        return cinderclient.v3.client.Client(session=session)
+        client = cinderclient.v3.client.Client(session=session)
+        return client
 
     def build_record(self, volume, extract_from, extract_to):
         user = self.users[volume.user_id]
@@ -57,20 +58,20 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
         active_duration = (extract_to - vol_start).total_seconds()
 
         r = record.StorageRecord(
-            uuid=volume.id,
-            site_name=CONF.site_name,
-            name=volume.name,
-            user_id=volume.user_id,
-            group_id=self.project_id,
-            fqan=self.vo,
-            compute_service=CONF.service_name,
-            status=volume.status,
-            active_duration=active_duration,
-            measure_time=self._get_measure_time(),
-            start_time=vol_start,
-            capacity=int(volume.size * 1073741824), # 1 GiB = 2^30
-            user_dn=user,
-            storage_media=volume.volume_type
+            uuid = volume.id,
+            site_name = CONF.site_name,
+            name = volume.name,
+            user_id = volume.user_id,
+            group_id = self.project_id,
+            fqan = self.vo,
+            compute_service = CONF.service_name,
+            status = volume.status,
+            active_duration = active_duration,
+            measure_time = self._get_measure_time(),
+            start_time = vol_start,
+            capacity = int(volume.size * 1073741824), # 1 GiB = 2^30
+            user_dn = user,
+            storage_media = volume.volume_type
         )
 
         if volume.status == "in-use":
@@ -102,6 +103,8 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
 
                 if len(aux) < limit:
                     break
+
+                vol = aux[-1]
                 marker = aux[-1].id
             except Exception as err:
                 print(f"Failed to list volumes: {err}")
