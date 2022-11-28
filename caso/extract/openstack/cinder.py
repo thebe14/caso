@@ -66,7 +66,7 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
             fqan = self.vo,
             compute_service = CONF.service_name,
             status = volume.status,
-            active_duration = active_duration,
+            active_duration = int(active_duration),
             measure_time = self._get_measure_time(),
             start_time = vol_start,
             capacity = int(volume.size * 1073741824), # 1 GiB = 2^30
@@ -81,7 +81,7 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
             if (attached_at < extract_from):
                 attached_at = extract_from
             attacht = (extract_to - attached_at).total_seconds()
-            r.attached_duration = attacht
+            r.attached_duration = int(attacht)
 
         if volume.encrypted:
             r.add_storage_class("encrypted")
@@ -99,13 +99,16 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
                     limit=limit,
                     marker=marker
                 )
-                volumes.extend(aux)
+                
+                count = len(aux)
+                if count > 0:
+                    volumes.extend(aux)
 
-                if len(aux) < limit:
+                if count < limit:
                     break
 
-                vol = aux[-1]
-                marker = aux[-1].id
+                last_vol = aux[-1]
+                marker = last_vol.id
             except Exception as err:
                 print(f"Failed to list volumes: {err}")
                 break

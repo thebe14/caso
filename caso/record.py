@@ -273,8 +273,8 @@ class StorageRecord(BaseRecord):
     # Extra field not serialized in the accounting record
     name: str
     status: typing.Optional[str]
-    active_duration: int
-    attached_duration: typing.Optional[int]
+    active_duration: int # seconds
+    attached_duration: typing.Optional[int] #seconds
     attached_to: typing.Optional[str]
 
     # (aidaph) Fix the return to something different to 0
