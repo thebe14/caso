@@ -59,7 +59,7 @@ class NeutronExtractor(openstack.BaseOpenStackExtractor):
             fqan=self.vo,
             ip_version=version,
             public_ip_count=ip_count,
-            compute_service=CONF.service_name
+            service=CONF.service_name
         )
 
         return r

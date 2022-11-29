@@ -64,7 +64,7 @@ class SwiftExtractor(openstack.BaseOpenStackExtractor):
             name = container["container"],
             group_id = self.project_id,
             fqan = self.vo,
-            compute_service = CONF.service_name,
+            service = CONF.service_name,
             active_duration=int(active_duration),
             measure_time = self._get_measure_time(),
             start_time = cont_start,

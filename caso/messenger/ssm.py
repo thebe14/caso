@@ -96,7 +96,7 @@ class _SSMBaseMessenger(caso.messenger.BaseMessenger):
                     "sr:recordId": str(record.uuid),
                 },
             )
-            ET.SubElement(sr, "sr:StorageSystem").text = record.compute_service
+            ET.SubElement(sr, "sr:StorageSystem").text = record.service
             ET.SubElement(sr, "sr:Site").text = record.site_name
 
             if any((record.user_id, record.user_dn)):

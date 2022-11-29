@@ -64,7 +64,7 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
             user_id = volume.user_id,
             group_id = self.project_id,
             fqan = self.vo,
-            compute_service = CONF.service_name,
+            service = CONF.service_name,
             status = volume.status,
             active_duration = int(active_duration),
             measure_time = self._get_measure_time(),

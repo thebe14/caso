@@ -171,7 +171,7 @@ class NovaExtractor(openstack.BaseOpenStackExtractor):
             fqan=self.vo,
             start_time=server_start,
             end_time=server_end,
-            compute_service=CONF.service_name,
+            service=CONF.service_name,
             status=status,
             image_id=image_id,
             user_dn=user,

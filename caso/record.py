@@ -34,7 +34,7 @@ class BaseRecord(pydantic.BaseModel, abc.ABC):
 
     site_name: str
     cloud_type = caso.user_agent
-    compute_service: str
+    service: str
 
 
 class CloudRecord(BaseRecord):
@@ -126,7 +126,7 @@ class CloudRecord(BaseRecord):
                 "public_ip_count": "PublicIPCount",
                 "benchmark_value": "Benchmark",
                 "benchmark_type": "BenchmarkType",
-                "compute_service": "CloudComputeService",
+                "service": "CloudComputeService",
             }
             return d.get(value, value)
 
@@ -167,7 +167,7 @@ class IPRecord(BaseRecord):
                 "user_dn": "GlobalUserName",
                 "ip_version": "IPVersion",
                 "public_ip_count": "IPCount",
-                "compute_service": "CloudComputeService",
+                "service": "CloudComputeService",
             }
             return d.get(field, field)
 
@@ -223,7 +223,7 @@ class AcceleratorRecord(object):
                 "measurement_month": "MeasurementMonth",
                 "measurement_year": "MeasurementYear",
                 "associated_record_type": "AssociatedRecordType",
-                "uuid": "AccUUID",
+                "uuid": "AcceleratorUUID",
                 "user_dn": "GlobalUserName",
                 "fqan": "FQAN",
                 "site": "SiteName",
@@ -270,7 +270,7 @@ class StorageRecord(BaseRecord):
     capacity: int # bytes
     objects: typing.Optional[int]
 
-    # Extra field not serialized in the accounting record
+    # Fields not serialized in the accounting record
     name: str
     status: typing.Optional[str]
     active_duration: int # seconds
@@ -297,8 +297,8 @@ class StorageRecord(BaseRecord):
         def map_fields(field: str) -> str:
             d = {
                 "measure_time": "CreateTime",
-                "uuid": "VolumeUUID",
-                "name": "RecordName",
+                "uuid": "StorageUUID",
+                "name": "StorageName",
                 "user_id": "LocalUser",
                 "user_dn": "GlobalUserName",
                 "group_id": "LocalGroup",
@@ -306,7 +306,6 @@ class StorageRecord(BaseRecord):
                 "site_name": "SiteName",
                 "capacity": "Capacity",
                 "objects": "Objects",
-                "active_duration": "ActiveDuration",
                 "start_time": "StartTime",
                 "storage_media": "Media",
                 "storage_class": "Class",
@@ -314,7 +313,8 @@ class StorageRecord(BaseRecord):
                 "status": "Status",
                 "attached_to": "AttachedTo",
                 "attached_duration": "AttachedDuration",
-                "compute_service": "CloudComputeService",
+                "active_duration": "ActiveDuration",
+                "service": "StorageSystem",
             }
             return d.get(field, field)
 
