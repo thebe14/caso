@@ -254,7 +254,7 @@ class StorageRecord(BaseRecord):
     version = "0.1"
 
     # Fields serialized in the accounting record
-    uuid: str
+    uuid: str # Used in RecordIdentity field
 
     user_id: typing.Optional[str]
     user_dn: typing.Optional[str]
@@ -267,14 +267,15 @@ class StorageRecord(BaseRecord):
     storage_media: typing.Optional[str]
     storage_class: typing.Optional[str]
 
-    capacity: int # bytes
+    capacity: int                   # bytes, includes any overhead
+    allocated: typing.Optional[int] # bytes, usable by user
     objects: typing.Optional[int]
 
     # Fields not serialized in the accounting record
     name: str
     status: typing.Optional[str]
     active_duration: int # seconds
-    attached_duration: typing.Optional[int] #seconds
+    attached_duration: typing.Optional[int] # seconds
     attached_to: typing.Optional[str]
 
     # (aidaph) Fix the return to something different to 0
@@ -305,6 +306,7 @@ class StorageRecord(BaseRecord):
                 "fqan": "FQAN",
                 "site_name": "SiteName",
                 "capacity": "Capacity",
+                "allocated": "Allocated",
                 "objects": "Objects",
                 "start_time": "StartTime",
                 "storage_media": "Media",

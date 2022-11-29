@@ -57,6 +57,7 @@ class SwiftExtractor(openstack.BaseOpenStackExtractor):
     def build_record(self, container, extract_from, extract_to):
         cont_start = extract_from
         active_duration = (extract_to - cont_start).total_seconds()
+        allocated = capacity = container["bytes_used"]
 
         r = record.StorageRecord(
             uuid = os.path.join(self.project_id, container["container"]),
@@ -68,7 +69,8 @@ class SwiftExtractor(openstack.BaseOpenStackExtractor):
             active_duration=int(active_duration),
             measure_time = self._get_measure_time(),
             start_time = cont_start,
-            capacity = container["bytes_used"],
+            allocated = allocated,
+            capacity = allocated,
             objects = container["object_count"]
         )
 

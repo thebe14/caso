@@ -118,8 +118,9 @@ class _SSMBaseMessenger(caso.messenger.BaseMessenger):
                 ET.SubElement(sr, "sr:StorageMedia").text = record.storage_media
             if record.storage_class:
                 ET.SubElement(sr, "sr:StorageClass").text = record.storage_class
-            capacity = str(record.capacity)
-            ET.SubElement(sr, "sr:ResourceCapacityUsed").text = str(capacity)
+            ET.SubElement(sr, "sr:ResourceCapacityUsed").text = str(record.capacity)
+            if record.allocated:
+                ET.SubElement(sr, "sr:ResourceCapacityAllocated").text = str(record.allocated)
             if record.objects:
                 ET.SubElement(sr, "sr:FileCount").text = str(record.objects)
         queue.add(ET.tostring(root))

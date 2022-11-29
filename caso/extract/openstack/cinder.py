@@ -56,6 +56,7 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
                 vol_start = extract_from    
 
         active_duration = (extract_to - vol_start).total_seconds()
+        allocated = int(volume.size * 1073741824), # 1 GiB = 2^30
 
         r = record.StorageRecord(
             uuid = volume.id,
@@ -69,7 +70,8 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
             active_duration = int(active_duration),
             measure_time = self._get_measure_time(),
             start_time = vol_start,
-            capacity = int(volume.size * 1073741824), # 1 GiB = 2^30
+            allocated = allocated,
+            capacity = allocated,
             user_dn = user,
             storage_media = volume.volume_type
         )
