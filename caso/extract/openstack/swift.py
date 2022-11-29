@@ -72,6 +72,9 @@ class SwiftExtractor(openstack.BaseOpenStackExtractor):
             objects = container["object_count"]
         )
 
+        if r.site_name == r.service:
+            r.service += ":Swift"
+
         if container["storage_policy"]:
             r.add_storage_class(container["storage_policy"])
 

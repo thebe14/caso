@@ -2,8 +2,12 @@
     <sr:StorageUsageRecord>
         <sr:RecordIdentity sr:createTime="2022-11-28T14:49:39.116020"
                            sr:recordId="afd721921d6e472490bbc935368ff343\Test" />
-        <sr:StorageSystem>INFN-CLOUD-BARI</sr:StorageSystem>
+        <sr:StorageSystem>INFN-CLOUD-BARI:Swift</sr:StorageSystem>
         <sr:Site>INFN-CLOUD-BARI</sr:Site>
+        <sr:SubjectIdentity>
+            <sr:LocalGroup>afd721921d6e472490bbc935368ff343</sr:LocalGroup>
+            <sr:Group>vo.access.egi.eu</sr:Group>
+        </sr:SubjectIdentity>
         <sr:StartTime>2022-11-10T00:00:00</sr:StartTime>
         <sr:EndTime>2022-11-28T14:49:39.116020</sr:EndTime>
         <sr:StorageClass>Policy-0</sr:StorageClass>

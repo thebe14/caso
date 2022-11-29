@@ -2,7 +2,7 @@
     <sr:StorageUsageRecord>
         <sr:RecordIdentity sr:createTime="2022-11-18T13:08:27.371580"
                            sr:recordId="d692f012-8c0e-4996-86ef-8c34526d1c3f" />
-        <sr:StorageSystem>IFCA-LCG2</sr:StorageSystem>
+        <sr:StorageSystem>IFCA-LCG2:Cinder</sr:StorageSystem>
         <sr:Site>IFCA-LCG2</sr:Site>
         <sr:SubjectIdentity>
             <sr:LocalUser>47d1e6653a13480eae8abeded0793451</sr:LocalUser>

@@ -74,6 +74,9 @@ class CinderExtractor(openstack.BaseOpenStackExtractor):
             storage_media = volume.volume_type
         )
 
+        if r.site_name == r.service:
+            r.service += ":Cinder"
+
         if volume.status == "in-use":
             r.attached_to = volume.attachments[0]["server_id"]
             attached_at = volume.attachments[0]["attached_at"]
