@@ -1,3 +1,38 @@
+python3-caso (4.0.0-1) stable; urgency=medium
+
+  [ Alvaro Lopez Garcia ]
+  * [2dc5334] Remove deprecated extractor base class
+  * [9ebf351] Allow to configure more than one extractor
+  * [5d234a1] Adapt neutron extractor code to new format
+  * [9c99261] Transform records into pydantic models, and start using typing hints
+  * [455053a] Include type checking with mypy
+  * [8f8aeac] Add Cinder storage extractor
+  * [d03c606] Fix pydantic model errors
+  * [dc154df] Typing on SSM
+  * [43f5f6b] Ensure that properties are also rendered as JSON
+  * [293b136] Make code black
+  * [fffc788] Remove unused exceptions
+  * [fcbc40a] Encode VM names in ASCII
+  * [76e3c4d] Image ID can be missing if removed from Glance
+  * [5d294c7] Rename abbreviated variables and methods in SSM messenger
+  * [28d40e7] Catch exception when creating directories
+  * [b26a13b] keystone_client: user project_id None when using name
+  * [090abf4] Fix error when image id is not a uuid
+  * [d852ddc] Update sample configuration file
+
+  [ Aida Palacio Hoz ]
+  * [aa0ff7f] Add an storage record class and publish through SSM
+
+  [ Enol Fernandez ]
+  * [dba1a7d] get lastRun back working
+  * [da3347c] Fix issues with times and dates in extractors and records
+  * [49717a7] Uniform formatting of strings
+  * [a69cdd3] Avoid calling get_keystone_user if already failed
+  * [0998c18] Adapt types
+  * [cab266c] Fix GPU record generation
+
+ -- Alvaro Lopez Garcia <aloga@ifca.unican.es>  Thu, 30 Mar 2023 22:40:05 +0200
+
 python3-caso (3.0.0-1) stable; urgency=medium
 
   [ Alvaro Lopez Garcia]

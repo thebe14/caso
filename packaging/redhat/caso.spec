@@ -12,7 +12,6 @@ BuildRequires: python3-devel
 BuildRequires: python3-setuptools
 BuildRequires: python3-pbr
 BuildRequires: python3-rpm-macros
-BuildRequires: python3-tox
 Requires: python3
 Requires: python3-oslo-config
 Requires: python3-oslo-concurrency
@@ -60,6 +59,32 @@ tox -e pep8,pip-missing-reqs,bandit,pypi
 %exclude /etc/caso/caso-config-generator.conf
 
 %changelog
+* Thu Mar 20 2023 Alvaro Lopez Garcia <aloga@ifca.unican.es> 4.0.0
+- Remove deprecated extractor base class
+- Allow to configure more than one extractor
+- Adapt neutron extractor code to new format
+- Transform records into pydantic models, and start using typing hints
+- Include type checking with mypy
+- Add Cinder storage extractor
+- Fix pydantic model errors
+- Typing on SSM
+- Ensure that properties are also rendered as JSON
+- Make code black
+- Remove unused exceptions
+- Encode VM names in ASCII
+- Image ID can be missing if removed from Glance
+- Rename abbreviated variables and methods in SSM messenger
+- Catch exception when creating directories
+- keystone_client: user project_id None when using name
+- Fix error when image id is not a uuid
+- Update sample configuration file
+- Add an storage record class and publish through SSM
+- get lastRun back working
+- Fix issues with times and dates in extractors and records
+- Uniform formatting of strings
+- Avoid calling get_keystone_user if already failed
+- Adapt types
+- Fix GPU record generation
 * Wed Mar 16 2022 Alvaro Lopez Garcia <aloga@ifca.unican.es> 3.0.0
 - Support only for Python 3
 - Code improvements and bugfixes
