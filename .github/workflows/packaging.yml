@@ -71,7 +71,7 @@ jobs:
 
       - name: Build RPM package
         id: rpm
-        uses: alvarolopez/rpmbuild@rockylinux8
+        uses: alvarolopez/rpmbuild@rockylinux9
         with:
           source_file: dist/caso-${{ github.ref_name}}.tar.gz
           spec_file: "packaging/redhat/caso.spec"
