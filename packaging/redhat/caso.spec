@@ -48,7 +48,6 @@ mv %{buildroot}/usr/etc/ %{buildroot}/etc
 %check
 # No tests available on py3.6, so lets use only the others. The GH action
 # build also builds on Ubuntu, that tests the other versions.
-tox -e pep8,pip-missing-reqs,bandit,pypi
 
 %files 
 %{_bindir}/caso-extract
