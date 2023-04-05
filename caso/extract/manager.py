@@ -29,12 +29,6 @@ import six
 from caso import loading
 
 cli_opts = [
-    cfg.ListOpt(
-        "projects",
-        default=[],
-        deprecated_name="tenants",
-        help="List of projects to extract accounting records from.",
-    ),
     cfg.StrOpt(
         "extract-to",
         deprecated_name="extract_to",
