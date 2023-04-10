@@ -85,6 +85,7 @@ extract accountig records:
    server has ended after this date, it will be included, but the consuption
    reported will end on this date. If no time zone is specified, UTC will be
    used.
+
 .. option:: --extractor EXTRACTOR
 
    Which extractor to use for getting the data. If you do not specify anything,
@@ -100,3 +101,12 @@ Running as a cron job
 The best way of running ``cASO`` is via a cron job like the following::
 
     10 * * * * caso-extract
+
+Other commands
+--------------
+
+caso-projects
+=============
+
+``cASO`` provides the ``caso-projects`` command line tool, that will print the list of
+configured OpenStack Keystone projects and their mappings.
