@@ -81,7 +81,14 @@ def main():
     log.setup(cfg.CONF, "caso")
     manager = caso.manager.Manager()
     for prj, vo in manager.projects_and_vos():
-        print(f"'{prj} mapped to VO '{vo}'")
+        prj_name = None
+        try:
+            prj_name = manager.extractor_manager.keystone.projects.get(prj).name
+        except Exception as e:
+            print(f"ERROR: Could not get project {prj}")
+            print(f"ERROR: {e}")
+
+        print(f"'{prj} ({prj_name}) mapped to VO '{vo}'")
 
 
 if __name__ == "__main__":
