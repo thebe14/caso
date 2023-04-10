@@ -2,3 +2,8 @@
 features:
   - |
     Allow to use Keystone project tags to get usages from projects.
+upgrade:
+  - | 
+    If using tags to gather the list of projects you need to ensure that the
+    correct roles and system scopes are applied. Please ensure that the correct
+    roles are defined, as indicated in the configuration documentation.

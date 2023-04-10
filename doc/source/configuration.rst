@@ -34,20 +34,32 @@ Otherwise, ``cASO`` will not be able to get the usages and will fail.
 In order to do so, we are going to setup a new role ``accounting`` a new user
 ``accounting``, adding it to each of the projects with that role::
 
-    openstack role create accounting
     openstack user create --password <password> accounting
     # For each of the projects, add the user with the accounting role
-    openstack role add --user accounting --project <project> accounting
+    openstack role add --user accounting --project <project> reader
+
+Moreover, if you wish to gather the list of projects that ``cASO`` should use directly
+from OpenStack, you need to grant the user the role reader with a system scope of
+``all``::
+
+    openstack role add --system all --user accounting reader
 
 Policy modifications
---------------------
-The accounting user needs access to Keystone so as to extract the users
-information. In this case, we can can grant the user just the rights for
-listing the users adding the appropriate rules in your policy configuration.
+------------------------
+
+.. important:: No policy modifications are needed
+
+    The following policy modifications are just shown here for reference, if you wish to
+    use a different role. You do not need to use them.
+
+If you use the role ``reader`` as configured above, you do not need to configure
+anything else in the policy. However, if you wish to use a different role mapping, the
+accounting user needs access to Keystone so as to extract the users information.
 Depending on your configuration, you need to modify the JSON policy file
 (``/etc/keystone/policy.json``) or the YAML policy file (``/etc/keystone/policy-yaml``).
-The modifications in the policy depend on the Keystone version, please ensure
-that you are applying the correct changes as listed in the following table.
+The modifications in the policy depend on the Keystone version, please ensure that you
+are applying the correct changes as listed in the following table. In the example show,
+we are using a dedicated role ``accounting``.
 
 +-------------+------------------------------------------------------------------------------+
 |  OpenStack  |                                Policy contents                               |
@@ -95,7 +107,7 @@ to specify the correct mapping in each of the projects properties. The name of t
 property that will be used is defined in the ``vo_property`` configuration option, and
 defaults to ``accounting:VO``, therefore you can configure it as follows::
 
-     openstack project set --property acconting:VO=<VO FQAN> <project id>
+     openstack project set --property accounting:VO=<VO FQAN> <project id>
 
 cASO configuration
 ==================
