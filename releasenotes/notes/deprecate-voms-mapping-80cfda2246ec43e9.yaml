@@ -7,3 +7,10 @@ features:
 deprecations:
   - |
     The VO mapping file is now deprecated, in favour of project properties.
+upgrade:
+  - | 
+    It is reccomended that you stop using the Keystone voms mapping file as
+    soon as possible, please migrate your old JSON mapping to the new method
+    using Keystone project's properties. In order to do so, you can use the 
+    ``caso-mapping-migrate`` command line option, that will provide you with 
+    the correct commands to run to perform the migration.

@@ -57,7 +57,8 @@ cli_opts = [
         deprecated_for_removal=True,
         deprecated_reason="This option is marked for removal in the next release. "
         "Please see the release notes, and migrate your current configuration "
-        "to use the project_mapping file as soon as possible.",
+        "to use the new project mapping as soon as possible. If you already migrated "
+        "your configuration, please remove the JSON file to get rid of this message.",
         help="File containing the VO <-> project mapping as used in Keystone-VOMS.",
     ),
     cfg.StrOpt(
@@ -161,6 +162,9 @@ class Manager(object):
         """Get the VO map."""
         if self._voms_map:
             return self._voms_map
+
+        if not os.path.exists(CONF.mapping_file):
+            return {}
 
         try:
             mapping = json.loads(open(CONF.mapping_file).read())

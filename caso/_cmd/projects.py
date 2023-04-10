@@ -22,7 +22,57 @@ from oslo_log import log
 import caso.config
 import caso.manager
 
+cli_opts = [
+    cfg.BoolOpt(
+        "migrate-projects",
+        default=False,
+        help="Migrate also the project list to Keystone tags (i.e. stop using the "
+        "'projects' option in the configuration file).",
+    ),
+]
+
 CONF = cfg.CONF
+CONF.register_cli_opts(cli_opts)
+
+
+def migrate():
+    """Migrate cASO VO file mapping to Keystone-based configuration."""
+    caso.config.parse_args(sys.argv)
+    log.setup(cfg.CONF, "caso")
+
+    CONF.set_default("dry_run", True)
+    manager = caso.manager.Manager()
+    if CONF.dry_run:
+        print(
+            "WARNING: Running in 'dry-run' mode, no actions will be peformed. If you "
+            "want to apply the changes, run with '--nodry-run'. Be aware that in "
+            "that case the cASO user will need write access to Keystone. If unsure "
+            "run the following commands as admin."
+        )
+
+    manager._load_managers()
+    for prj, vo in manager.extractor_manager.voms_map.items():
+        if CONF.dry_run:
+            print(f"openstack project set --property {CONF.vo_property}={vo} {prj}")
+        else:
+            try:
+                kw = {CONF.vo_property: vo}
+                manager.extractor_manager.keystone.projects.update(prj, **kw)
+            except Exception as e:
+                print(f"ERROR: could not add property for project {prj}.")
+                print(f"ERROR: {e}")
+
+    if CONF.migrate_projects:
+        for prj in CONF.projects:
+            if CONF.dry_run:
+                print(f"openstack project set --tag {CONF.caso_tag} {prj}")
+            else:
+                try:
+                    project = manager.extractor_manager.keystone.projects.get(prj)
+                    project.add_tag(CONF.caso_tag)
+                except Exception as e:
+                    print(f"ERROR: could not add tag for project {prj}.")
+                    print(f"ERROR: {e}")
 
 
 def main():
