@@ -31,8 +31,6 @@ CONF = cfg.CONF
 
 CONF.import_opt("region_name", "caso.extract.openstack")
 CONF.import_opt("site_name", "caso.extract.base")
-CONF.import_group("benchmark", "caso.extract.base")
-CONF.import_group("accelerator", "caso.extract.base")
 
 LOG = log.getLogger(__name__)
 

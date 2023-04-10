@@ -20,6 +20,7 @@ import itertools
 
 import caso.extract.base
 import caso.extract.manager
+import caso.extract.openstack.nova
 import caso.keystone_client
 import caso.manager
 import caso.messenger.logstash
@@ -38,8 +39,8 @@ def list_opts():
                 caso.extract.manager.cli_opts,
             ),
         ),
-        ("accelerator", caso.extract.base.accelerator_opts),
-        ("benchmark", caso.extract.base.benchmark_opts),
+        ("accelerator", caso.extract.openstack.nova.accelerator_opts),
+        ("benchmark", caso.extract.openstack.nova.benchmark_opts),
         ("keystone_auth", caso.keystone_client.opts),
         ("logstash", caso.messenger.logstash.opts),
         ("ssm", caso.messenger.ssm.opts),
