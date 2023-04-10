@@ -132,13 +132,6 @@ class Manager(object):
     def get_lastrun(self, project):
         """Get lastrun file for a given project."""
         lfile = f"{self.last_run_base}.{project}"
-        if not os.path.exists(lfile):
-            LOG.warning(
-                "WARNING: Old global lastrun file detected and no "
-                "project specific file found, using it for this run"
-            )
-            lfile = self.last_run_base
-
         date = "1970-01-01"
 
         if os.path.exists(lfile):
