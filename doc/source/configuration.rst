@@ -36,9 +36,8 @@ usages and will fail::
     # For each of the projects, add the user with the accounting role
     openstack role add --user accounting --project <project> reader
 
-Moreover, if you wish to gather the list of projects that ``cASO`` should use directly
-from OpenStack, you need to grant the user the role reader with a system scope of
-``all``::
+Moreover, you need to grant the user the role reader with a system scope of ``all`` in
+order to get all the project tags, as well as the other user's information::
 
     openstack role add --system all --user accounting reader
 

@@ -1,0 +1,9 @@
+---
+upgrade:
+  - |
+    The ``reader`` role with a system scope of ``all`` must be granted to the
+    ``cASO`` user, please check the documentation.
+fixes:
+  - |
+    * `#108 <https://github.com/IFCA/caso/issues/108>`. Failure getting
+      accounting data when using different domains.

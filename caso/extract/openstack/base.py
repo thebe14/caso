@@ -92,7 +92,7 @@ class BaseOpenStackExtractor(base.BaseProjectExtractor):
 
     def _get_keystone_client(self):
         """Get a Keystone Client for the configured project in the object."""
-        client = keystone_client.get_client(CONF, self.project)
+        client = keystone_client.get_client(CONF, system_scope="all")
         return client
 
     def _get_cinder_client(self):
@@ -126,11 +126,11 @@ class BaseOpenStackExtractor(base.BaseProjectExtractor):
             user = self.keystone.users.get(user=uuid)
             return user.name
         except keystoneauth1.exceptions.http.Forbidden as e:
-            LOG.error("Unauthorized to get user")
+            LOG.error(f"Unauthorized to get user {uuid}")
             LOG.exception(e)
             return None
         except Exception as e:
-            LOG.debug("Exception while getting user")
+            LOG.debug(f"Exception while getting user {uuid}")
             LOG.exception(e)
             return None
 
