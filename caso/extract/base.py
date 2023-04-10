@@ -115,30 +115,6 @@ CONF.register_opts(accelerator_opts, group="accelerator")
 
 LOG = log.getLogger(__name__)
 
-openstack_vm_statuses = {
-    "active": "started",
-    "build": "started",
-    "confirming_resize": "started",
-    "deleted": "completed",
-    "error": "error",
-    "hard_reboot": "started",
-    "migrating": "started",
-    "password": "started",
-    "paused": "paused",
-    "reboot": "started",
-    "rebuild": "started",
-    "rescue": "started",
-    "resize": "started",
-    "revert_resize": "started",
-    "verify_resize": "started",
-    "shutoff": "completed",
-    "suspended": "suspended",
-    "terminated": "completed",
-    "stopped": "stopped",
-    "saving": "started",
-    "unknown": "unknown",
-}
-
 
 @six.add_metaclass(abc.ABCMeta)
 class BaseProjectExtractor(object):
@@ -181,13 +157,6 @@ class BaseProjectExtractor(object):
                 for project in projects:
                     voms_map[project] = vo
             return voms_map
-
-    def vm_status(self, status):
-        """Return the status corresponding to the OpenStack status.
-
-        :param status: OpenStack status.
-        """
-        return openstack_vm_statuses.get(status.lower(), "unknown")
 
     @abc.abstractmethod
     def extract(self, extract_from):

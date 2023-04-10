@@ -131,6 +131,36 @@ class NovaExtractor(base.BaseOpenStackExtractor):
                     count += 1
         return count
 
+    def vm_status(self, status):
+        """Return the status corresponding to the OpenStack status.
+
+        :param status: OpenStack status.
+        """
+        openstack_vm_statuses = {
+            "active": "started",
+            "build": "started",
+            "confirming_resize": "started",
+            "deleted": "completed",
+            "error": "error",
+            "hard_reboot": "started",
+            "migrating": "started",
+            "password": "started",
+            "paused": "paused",
+            "reboot": "started",
+            "rebuild": "started",
+            "rescue": "started",
+            "resize": "started",
+            "revert_resize": "started",
+            "verify_resize": "started",
+            "shutoff": "completed",
+            "suspended": "suspended",
+            "terminated": "completed",
+            "stopped": "stopped",
+            "saving": "started",
+            "unknown": "unknown",
+        }
+        return openstack_vm_statuses.get(status.lower(), "unknown")
+
     def _build_record(self, server):
         user = self.users[server.user_id]
 
