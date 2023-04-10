@@ -17,7 +17,6 @@
 """Module containing a No-Op (No Operation) messenger that does nothing."""
 
 from oslo_log import log
-import six
 
 import caso.messenger
 
@@ -29,5 +28,5 @@ class NoopMessenger(caso.messenger.BaseMessenger):
 
     def push(self, records):
         """Push records to nowhere."""
-        for uuid, _ in six.iteritems(records):
-            LOG.info(f"nooping {uuid}")
+        for record in records:
+            LOG.info(f"nooping {record.uuid} for record {record.__class__}")
