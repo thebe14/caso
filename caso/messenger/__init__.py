@@ -56,4 +56,5 @@ class Manager(object):
             self.mgr.map_method("push", records)
         except Exception as e:
             # Capture exception so that we can continue working
-            LOG.error(e)
+            LOG.error("Something happeneded when pushing records.")
+            LOG.exception(e)
