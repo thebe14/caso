@@ -57,7 +57,7 @@ cli_opts = [
         help="Which extractor to use for getting the data. "
         "If you do not specify anything, nova will be "
         "used. Available choices are {}".format(
-            loading.get_available_extractor_names()
+            sorted(loading.get_available_extractor_names())
         ),
     ),
 ]

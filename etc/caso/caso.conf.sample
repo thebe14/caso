@@ -63,8 +63,8 @@
 #extract_from = <None>
 
 # Which extractor to use for getting the data. If you do not specify anything,
-# nova will be used. Available choices are frozenset({'neutron', 'nova',
-# 'cinder'}) (list value)
+# nova will be used. Available choices are ['cinder', 'neutron', 'nova'] (list
+# value)
 #extractor = nova
 
 #
