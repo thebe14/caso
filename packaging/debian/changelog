@@ -1,4 +1,4 @@
-python3-caso (4.1.0-1) stable; urgency=medium
+python3-caso (4.1.0-0rc2) stable; urgency=medium
 
   * [a74fb28] Remove duplicated option
   * [1142758] Let operators mark projects directly on keystone
@@ -17,6 +17,8 @@ python3-caso (4.1.0-1) stable; urgency=medium
   * [93b9df3] Update documentation
   * [b014846] Include caso-projects in usage commands
   * [6aaad9d] Remove deprecated option
+  * [42789db] Update configuration file
+  * [0206294] Default to all OpenStack extractors
 
  -- Alvaro Lopez Garcia <aloga@ifca.unican.es>  Mon, 10 Apr 2023 14:29:16 +0200
 

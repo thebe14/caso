@@ -78,6 +78,8 @@ mv %{buildroot}/usr/etc/ %{buildroot}/etc
 - Update documentation
 - Include caso-projects in usage commands
 - Remove deprecated option
+- Update configuration file
+- Default to all OpenStack extractors
 * Thu Mar 20 2023 Alvaro Lopez Garcia <aloga@ifca.unican.es> 4.0.0
 - Remove deprecated extractor base class
 - Allow to configure more than one extractor
