@@ -22,9 +22,6 @@ import dateutil.parser
 from dateutil.relativedelta import relativedelta
 from dateutil.rrule import MONTHLY
 from dateutil.rrule import rrule
-import glanceclient.client
-import neutronclient.v2_0.client
-import novaclient.client
 import novaclient.exceptions
 from oslo_config import cfg
 from oslo_log import log
@@ -110,22 +107,6 @@ class NovaExtractor(base.BaseOpenStackExtractor):
 
         self.flavors = self._get_flavors()
         self.images = self._get_images()
-
-    def _get_nova_client(self):
-        """Get a nova client with a keystone session."""
-        region_name = CONF.region_name
-        session = self._get_keystone_session()
-        return novaclient.client.Client(2, session=session, region_name=region_name)
-
-    def _get_glance_client(self):
-        """Get a glance client with a keystone session."""
-        session = self._get_keystone_session()
-        return glanceclient.client.Client(2, session=session)
-
-    def _get_neutron_client(self):
-        """Get a neutron client with a keystone session."""
-        session = self._get_keystone_session()
-        return neutronclient.v2_0.client.Client(session=session)
 
     def _build_acc_records(self, server, server_record, extract_from, extract_to):
         records = {}

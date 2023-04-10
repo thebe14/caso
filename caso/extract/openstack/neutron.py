@@ -19,7 +19,6 @@
 import collections
 import ipaddress
 
-import neutronclient.v2_0.client
 from oslo_config import cfg
 from oslo_log import log
 
@@ -43,10 +42,6 @@ class NeutronExtractor(base.BaseOpenStackExtractor):
         super(NeutronExtractor, self).__init__(project, vo)
 
         self.neutron = self._get_neutron_client()
-
-    def _get_neutron_client(self):
-        session = self._get_keystone_session()
-        return neutronclient.v2_0.client.Client(session=session)
 
     def _build_ip_record(self, user_id, ip_count, version):
         user = self.users[user_id]

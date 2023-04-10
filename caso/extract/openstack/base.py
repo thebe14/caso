@@ -18,7 +18,11 @@
 
 import datetime
 
+import cinderclient.v3.client
+import glanceclient.client
 import keystoneauth1.exceptions.http
+import neutronclient.v2_0.client
+import novaclient.client
 from oslo_config import cfg
 from oslo_log import log
 
@@ -90,6 +94,27 @@ class BaseOpenStackExtractor(base.BaseProjectExtractor):
         """Get a Keystone Client for the configured project in the object."""
         client = keystone_client.get_client(CONF, self.project)
         return client
+
+    def _get_cinder_client(self):
+        """Get Cinder client with keystone session."""
+        session = self._get_keystone_session()
+        return cinderclient.v3.client.Client(session=session)
+
+    def _get_glance_client(self):
+        """Get a glance client with a keystone session."""
+        session = self._get_keystone_session()
+        return glanceclient.client.Client(2, session=session)
+
+    def _get_neutron_client(self):
+        """Get a neutron client with a keystone session."""
+        session = self._get_keystone_session()
+        return neutronclient.v2_0.client.Client(session=session)
+
+    def _get_nova_client(self):
+        """Get a nova client with a keystone session."""
+        region_name = CONF.region_name
+        session = self._get_keystone_session()
+        return novaclient.client.Client(2, session=session, region_name=region_name)
 
     def _get_project_id(self):
         """Get the project ID from the project in the object."""

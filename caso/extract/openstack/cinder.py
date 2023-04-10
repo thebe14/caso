@@ -18,7 +18,6 @@
 
 import operator
 
-import cinderclient.v3.client
 import dateutil.parser
 from oslo_config import cfg
 from oslo_log import log
@@ -42,11 +41,6 @@ class CinderExtractor(base.BaseOpenStackExtractor):
         super(CinderExtractor, self).__init__(project, vo)
 
         self.cinder = self._get_cinder_client()
-
-    def _get_cinder_client(self):
-        """Get Cinder client with keystone session."""
-        session = self._get_keystone_session()
-        return cinderclient.v3.client.Client(session=session)
 
     def _build_record(self, volume, extract_from, extract_to):
         """Build an individual record."""
