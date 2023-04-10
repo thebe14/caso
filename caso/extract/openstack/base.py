@@ -32,7 +32,7 @@ opts = [
         "region_name",
         default=None,
         help="OpenStack Region to use. This option will force cASO to "
-        "extract records from a specific OpenStack Region, in "
+        "extract records from a specific OpenStack Region, if "
         "there are several defined in the OpenStack site. "
         "Defaults to None.",
     )
