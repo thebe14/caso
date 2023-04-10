@@ -17,8 +17,10 @@
 """Module containing the manager for all extractors configured in cASO."""
 
 import datetime
+import json
 import os.path
 import sys
+import warnings
 
 import dateutil.parser
 from dateutil import tz
@@ -42,6 +44,21 @@ cli_opts = [
         "caso_tag",
         default="caso",
         help="Tag used to mark a project in Keystone to be extracted by cASO",
+    ),
+    cfg.StrOpt(
+        "vo_property",
+        default="accounting:VO",
+        help="Property key used to get the VO name from the project properties. ",
+    ),
+    cfg.StrOpt(
+        "mapping_file",
+        default="/etc/caso/voms.json",
+        deprecated_group="extractor",
+        deprecated_for_removal=True,
+        deprecated_reason="This option is marked for removal in the next release. "
+        "Please see the release notes, and migrate your current configuration "
+        "to use the project_mapping file as soon as possible.",
+        help="File containing the VO <-> project mapping as used in Keystone-VOMS.",
     ),
     cfg.StrOpt(
         "extract-to",
@@ -97,6 +114,7 @@ class Manager(object):
         self.extractors = extractors
         self.last_run_base = os.path.join(CONF.spooldir, "lastrun")
 
+        self._voms_map = {}
         self.keystone = self._get_keystone_client()
 
     @property
@@ -145,6 +163,70 @@ class Manager(object):
         with open(lfile, "w") as fd:
             fd.write(str(datetime.datetime.now(tz.tzutc())))
 
+    @property
+    def voms_map(self):
+        """Get the VO map."""
+        if self._voms_map:
+            return self._voms_map
+
+        try:
+            mapping = json.loads(open(CONF.mapping_file).read())
+        except ValueError:
+            # FIXME(aloga): raise a proper exception here
+            raise
+        else:
+            self._voms_map = {}
+            for vo, vomap in six.iteritems(mapping):
+                tenant = vomap.get("tenant", None)
+                tenants = vomap.get("tenants", [])
+                if tenant is not None:
+                    warnings.warn(
+                        "Using deprecated 'tenant' mapping, please "
+                        "use 'projects' instead",
+                        DeprecationWarning,
+                    )
+                if tenants:
+                    warnings.warn(
+                        "Using deprecated 'tenants' mapping, please "
+                        "use 'projects' instead",
+                        DeprecationWarning,
+                    )
+                tenants.append(tenant)
+                projects = vomap.get("projects", tenants)
+                if not projects:
+                    LOG.warning(f"No project mapping found for VO {vo}")
+                for project in projects:
+                    self._voms_map[project] = vo
+            return self._voms_map
+
+    def get_project_vo(self, project_id):
+        """Get the VO where the project should be mapped."""
+        project = self.keystone.projects.get(project_id)
+        project.get()
+        vo = project.to_dict().get(CONF.vo_property, None)
+        if vo is None:
+            LOG.warning(
+                f"No mapping could be found for project '{project_id}' in the "
+                "Keystone project metadata, please check cASO documentation."
+            )
+            vo = self.voms_map.get(project_id, None)
+            if vo is None:
+                LOG.warning(
+                    "No mapping could be found for project "
+                    f"'{project_id}', please check mapping file!"
+                )
+            else:
+                LOG.warning(
+                    "Using deprecated mapping file, please check cASO documentation "
+                    "and migrate to Keystone properties as soon as possible."
+                )
+        else:
+            LOG.debug(
+                f"Found VO mapping ({vo}) in Keystone project '{project_id}' "
+                "metadata."
+            )
+        return vo
+
     def get_records(self):
         """Get records from given date.
 
@@ -173,6 +255,8 @@ class Manager(object):
         for project in self.projects:
             LOG.info(f"Extracting records for project '{project}'")
 
+            vo = self.get_project_vo(project)
+
             extract_from = CONF.extract_from or self.get_lastrun(project)
             if isinstance(extract_from, six.string_types):
                 extract_from = dateutil.parser.parse(extract_from)
@@ -196,7 +280,7 @@ class Manager(object):
                     f"({extract_from} to {extract_to})"
                 )
                 try:
-                    extractor = extractor_cls(project)
+                    extractor = extractor_cls(project, vo)
                     records = extractor.extract(extract_from, extract_to)
                     current_count = len(records)
                     record_count += current_count

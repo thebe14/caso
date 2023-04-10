@@ -30,8 +30,8 @@ def main():
     caso.config.parse_args(sys.argv)
     log.setup(cfg.CONF, "caso")
     manager = caso.manager.Manager()
-    for prj in manager.projects():
-        print(prj)
+    for prj, vo in manager.projects_and_vos():
+        print(f"'{prj} mapped to VO '{vo}'")
 
 
 if __name__ == "__main__":

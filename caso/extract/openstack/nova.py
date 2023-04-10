@@ -100,9 +100,9 @@ LOG = log.getLogger(__name__)
 class NovaExtractor(base.BaseOpenStackExtractor):
     """An OpenStack Compute (Nova) record extractor for cASO."""
 
-    def __init__(self, project):
+    def __init__(self, project, vo):
         """Get a Nova record extractor for a given project."""
-        super(NovaExtractor, self).__init__(project)
+        super(NovaExtractor, self).__init__(project, vo)
 
         self.nova = self._get_nova_client()
         self.glance = self._get_glance_client()

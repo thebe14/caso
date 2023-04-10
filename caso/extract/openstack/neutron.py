@@ -38,9 +38,9 @@ LOG = log.getLogger(__name__)
 class NeutronExtractor(base.BaseOpenStackExtractor):
     """An OpenStack Network (Neutron) record extractor for cASO."""
 
-    def __init__(self, project):
+    def __init__(self, project, vo):
         """Get a Neutron record extractor for a given project."""
-        super(NeutronExtractor, self).__init__(project)
+        super(NeutronExtractor, self).__init__(project, vo)
 
         self.neutron = self._get_neutron_client()
 

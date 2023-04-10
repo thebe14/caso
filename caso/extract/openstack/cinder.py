@@ -37,9 +37,9 @@ LOG = log.getLogger(__name__)
 class CinderExtractor(base.BaseOpenStackExtractor):
     """An OpenStack Volume (Cinder) record extractor for cASO."""
 
-    def __init__(self, project):
+    def __init__(self, project, vo):
         """Get a Cinder record extractor for a given project."""
-        super(CinderExtractor, self).__init__(project)
+        super(CinderExtractor, self).__init__(project, vo)
 
         self.cinder = self._get_cinder_client()
 

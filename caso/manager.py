@@ -21,6 +21,7 @@ import os.path
 
 from oslo_concurrency import lockutils
 from oslo_config import cfg
+from oslo_log import log
 
 import caso.extract.manager
 from caso import loading
@@ -65,6 +66,8 @@ CONF = cfg.CONF
 CONF.register_opts(opts)
 CONF.register_cli_opts(cli_opts)
 
+LOG = log.getLogger(__name__)
+
 
 class Manager(object):
     """cASO manager class to deal with the main functionality."""
@@ -89,6 +92,16 @@ class Manager(object):
         self._load_managers()
 
         return self.extractor_manager.projects
+
+    def projects_and_vos(self):
+        """Get the configured projects and VOs as tuples."""
+        self._load_managers()
+
+        for prj in self.extractor_manager.projects:
+            try:
+                yield (prj, self.extractor_manager.get_project_vo(prj))
+            except Exception as e:
+                LOG.error(e)
 
     def run(self):
         """Run the manager.

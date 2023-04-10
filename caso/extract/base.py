@@ -17,8 +17,6 @@
 """Module containing the base class and configuration for all cASO extractors."""
 
 import abc
-import json
-import warnings
 
 from oslo_config import cfg
 from oslo_log import log
@@ -28,16 +26,6 @@ opts = [
     cfg.StrOpt("site_name", help="Site name as in GOCDB."),
     cfg.StrOpt(
         "service_name", default="$site_name", help="Service name within the site"
-    ),
-    cfg.StrOpt(
-        "mapping_file",
-        default="/etc/caso/voms.json",
-        deprecated_group="extractor",
-        deprecated_for_removal=True,
-        deprecated_reason="This option is marked for removal in the next release. "
-        "Please see the release notes, and migrate your current configuration "
-        "to use the project_mapping file as soon as possible.",
-        help="File containing the VO <-> project mapping as used in Keystone-VOMS.",
     ),
 ]
 
@@ -54,40 +42,6 @@ class BaseProjectExtractor(object):
     def __init__(self, project):
         """Initialize extractor, loading the VO map."""
         self.project = project
-
-    @property
-    def voms_map(self):
-        """Get the VO map."""
-        # FIXME(remove this)
-        try:
-            mapping = json.loads(open(CONF.mapping_file).read())
-        except ValueError:
-            # FIXME(aloga): raise a proper exception here
-            raise
-        else:
-            voms_map = {}
-            for vo, vomap in six.iteritems(mapping):
-                tenant = vomap.get("tenant", None)
-                tenants = vomap.get("tenants", [])
-                if tenant is not None:
-                    warnings.warn(
-                        "Using deprecated 'tenant' mapping, please "
-                        "use 'projects' instead",
-                        DeprecationWarning,
-                    )
-                if tenants:
-                    warnings.warn(
-                        "Using deprecated 'tenants' mapping, please "
-                        "use 'projects' instead",
-                        DeprecationWarning,
-                    )
-                tenants.append(tenant)
-                projects = vomap.get("projects", tenants)
-                if not projects:
-                    LOG.warning(f"No project mapping found for VO {vo}")
-                for project in projects:
-                    voms_map[project] = vo
-            return voms_map
 
     @abc.abstractmethod
     def extract(self, extract_from):

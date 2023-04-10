@@ -36,11 +36,6 @@ opts = [
         "there are several defined in the OpenStack site. "
         "Defaults to None.",
     ),
-    cfg.StrOpt(
-        "vo_property",
-        default="accounting:VO",
-        help="Property key used to get the VO name from the project properties. ",
-    ),
 ]
 
 CONF.register_opts(opts)
@@ -51,14 +46,14 @@ LOG = log.getLogger(__name__)
 class BaseOpenStackExtractor(base.BaseProjectExtractor):
     """Base OpenStack Extractor that all other extractors should inherit from."""
 
-    def __init__(self, project):
+    def __init__(self, project, vo):
         """Initialize the OpenStack extractor for a given project."""
         super(BaseOpenStackExtractor, self).__init__(project)
 
         self.keystone = self._get_keystone_client()
         self.project_id = self._get_project_id()
 
-        self.vo = self._get_vo()
+        self.vo = vo
 
         class Users:
             def __init__(self, parent):
@@ -113,34 +108,6 @@ class BaseOpenStackExtractor(base.BaseProjectExtractor):
             LOG.debug("Exception while getting user")
             LOG.exception(e)
             return None
-
-    def _get_vo(self):
-        """Get the VO where the project should be mapped."""
-        project = self.keystone.projects.get(self.project)
-        project.get()
-        vo = project.to_dict().get(CONF.vo_property, None)
-        if vo is None:
-            LOG.warning(
-                f"No mapping could be found for project '{self.project}' in the "
-                "Keystone project metadata, please check cASO documentation."
-            )
-            vo = self.voms_map.get(self.project, None)
-            if vo is None:
-                LOG.warning(
-                    "No mapping could be found for project "
-                    f"'{self.project}', please check mapping file!"
-                )
-            else:
-                LOG.warning(
-                    "Using deprecated mapping file, please check cASO documentation "
-                    "and migrate to Keystone properties as soon as possible."
-                )
-        else:
-            LOG.debug(
-                f"Found VO mapping ({vo}) in Keystone project '{self.project}' "
-                "metadata."
-            )
-        return vo
 
     # FIXME(aloga): this has to go inside a record
     @staticmethod

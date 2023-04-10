@@ -75,6 +75,7 @@ class TestCasoManager(base.TestCase):
         ret = self.manager.get_records()
         self.m_extractor.assert_called_once_with(
             "bazonk",
+            mock.ANY,
         )
         self.m_extractor.return_value.extract.assert_called_once_with(
             dateutil.parser.parse(extract_from).replace(tzinfo=tz.tzutc()),
@@ -109,6 +110,7 @@ class TestCasoManager(base.TestCase):
             m.assert_called_once_with("bazonk")
             self.m_extractor.assert_called_once_with(
                 "bazonk",
+                mock.ANY,
             )
             self.m_extractor.return_value.extract.assert_called_once_with(
                 dateutil.parser.parse(lastrun).replace(tzinfo=tz.tzutc()),

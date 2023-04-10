@@ -37,6 +37,10 @@
 # Tag used to mark a project in Keystone to be extracted by cASO (string value)
 #caso_tag = caso
 
+# Property key used to get the VO name from the project properties.  (string
+# value)
+#vo_property = accounting:VO
+
 # DEPRECATED: File containing the VO <-> project mapping as used in Keystone-
 # VOMS. (string value)
 # This option is deprecated for removal.
