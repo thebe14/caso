@@ -1,0 +1,9 @@
+---
+features:
+  - |
+    Allow loading VO mapping directly from Keystone. Instead of mainitaining a 
+    separate file, we now allow users to load the VO directly from a configurable
+    project property.
+deprecations:
+  - |
+    The VO mapping file is now deprecated, in favour of project properties.

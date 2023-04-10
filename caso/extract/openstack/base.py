@@ -35,7 +35,12 @@ opts = [
         "extract records from a specific OpenStack Region, if "
         "there are several defined in the OpenStack site. "
         "Defaults to None.",
-    )
+    ),
+    cfg.StrOpt(
+        "vo_property",
+        default="accounting:VO",
+        help="Property key used to get the VO name from the project properties. ",
+    ),
 ]
 
 CONF.register_opts(opts)
@@ -50,10 +55,10 @@ class BaseOpenStackExtractor(base.BaseProjectExtractor):
         """Initialize the OpenStack extractor for a given project."""
         super(BaseOpenStackExtractor, self).__init__(project)
 
-        self.vo = self._get_vo()
-
         self.keystone = self._get_keystone_client()
         self.project_id = self._get_project_id()
+
+        self.vo = self._get_vo()
 
         class Users:
             def __init__(self, parent):
@@ -111,11 +116,29 @@ class BaseOpenStackExtractor(base.BaseProjectExtractor):
 
     def _get_vo(self):
         """Get the VO where the project should be mapped."""
-        vo = self.voms_map.get(self.project)
+        project = self.keystone.projects.get(self.project)
+        project.get()
+        vo = project.to_dict().get(CONF.vo_property, None)
         if vo is None:
             LOG.warning(
-                "No mapping could be found for project "
-                f"'{self.project}', please check mapping file!"
+                f"No mapping could be found for project '{self.project}' in the "
+                "Keystone project metadata, please check cASO documentation."
+            )
+            vo = self.voms_map.get(self.project, None)
+            if vo is None:
+                LOG.warning(
+                    "No mapping could be found for project "
+                    f"'{self.project}', please check mapping file!"
+                )
+            else:
+                LOG.warning(
+                    "Using deprecated mapping file, please check cASO documentation "
+                    "and migrate to Keystone properties as soon as possible."
+                )
+        else:
+            LOG.debug(
+                f"Found VO mapping ({vo}) in Keystone project '{self.project}' "
+                "metadata."
             )
         return vo
 

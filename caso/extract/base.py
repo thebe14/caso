@@ -46,7 +46,11 @@ opts = [
         "mapping_file",
         default="/etc/caso/voms.json",
         deprecated_group="extractor",
-        help="File containing the VO <-> project mapping as used " "in Keystone-VOMS.",
+        deprecated_for_removal=True,
+        deprecated_reason="This option is marked for removal in the next release. "
+        "Please see the release notes, and migrate your current configuration "
+        "to use the project_mapping file as soon as possible.",
+        help="File containing the VO <-> project mapping as used in Keystone-VOMS.",
     ),
 ]
 
@@ -144,6 +148,9 @@ class BaseProjectExtractor(object):
         """Initialize extractor, loading the VO map."""
         self.project = project
 
+    @property
+    def voms_map(self):
+        """Get the VO map."""
         # FIXME(remove this)
         try:
             mapping = json.loads(open(CONF.mapping_file).read())
@@ -151,7 +158,7 @@ class BaseProjectExtractor(object):
             # FIXME(aloga): raise a proper exception here
             raise
         else:
-            self.voms_map = {}
+            voms_map = {}
             for vo, vomap in six.iteritems(mapping):
                 tenant = vomap.get("tenant", None)
                 tenants = vomap.get("tenants", [])
@@ -172,7 +179,8 @@ class BaseProjectExtractor(object):
                 if not projects:
                     LOG.warning(f"No project mapping found for VO {vo}")
                 for project in projects:
-                    self.voms_map[project] = vo
+                    voms_map[project] = vo
+            return voms_map
 
     def vm_status(self, status):
         """Return the status corresponding to the OpenStack status.

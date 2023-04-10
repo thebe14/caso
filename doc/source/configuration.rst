@@ -86,6 +86,17 @@ result from the merge of both methods, so thay are not mutually exclusive.
 * Using the ``projects`` list in the ``[DEFAULT]`` section of your configuration file
   (see below).
 
+Setting VO mapping
+------------------
+
+In order to publish correct accounting records, ``cASO`` needs to know the VO that
+should be used to publish the records from a given project. In order to do so, you need
+to specify the correct mapping in each of the projects properties. The name of the
+property that will be used is defined in the ``vo_property`` configuration option, and
+defaults to ``accounting:VO``, therefore you can configure it as follows::
+
+     openstack project set --property acconting:VO=<VO FQAN> <project id>
+
 cASO configuration
 ==================
 
@@ -128,8 +139,8 @@ of every option. You should check at least the following options:
 
   Note that there might be other messengers available in the system if they are
   registered into the ``caso.messenger`` entry point namespace.
-* ``mapping_file`` (default: ``/etc/caso/voms.json``). File containing the
-  mapping from VOs to local projects as configured in Keystone-VOMS, in the
+* **DEPRECATED** ``mapping_file`` (default: ``/etc/caso/voms.json``). File containing
+  the mapping from VOs to local projects as configured in Keystone-VOMS, in the
   following form::
 
     {

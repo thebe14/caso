@@ -37,8 +37,13 @@
 # Tag used to mark a project in Keystone to be extracted by cASO (string value)
 #caso_tag = caso
 
-# File containing the VO <-> project mapping as used in Keystone-VOMS. (string
-# value)
+# DEPRECATED: File containing the VO <-> project mapping as used in Keystone-
+# VOMS. (string value)
+# This option is deprecated for removal.
+# Its value may be silently ignored in the future.
+# Reason: This option is marked for removal in the next release. Please see the
+# release notes, and migrate your current configuration to use the
+# project_mapping file as soon as possible.
 #mapping_file = /etc/caso/voms.json
 
 # Extract record changes until this date. If it is not set, we use now. If a
