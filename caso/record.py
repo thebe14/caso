@@ -157,6 +157,8 @@ class IPRecord(_BaseRecord):
 
     version = "0.2"
 
+    uuid: m_uuid.UUID
+
     user_id: typing.Optional[str]
     user_dn: typing.Optional[str]
     group_id: str

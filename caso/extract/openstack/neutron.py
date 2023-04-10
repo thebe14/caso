@@ -18,6 +18,7 @@
 
 import collections
 import ipaddress
+import uuid
 
 from oslo_config import cfg
 from oslo_log import log
@@ -49,6 +50,7 @@ class NeutronExtractor(base.BaseOpenStackExtractor):
         measure_time = self._get_measure_time()
 
         r = record.IPRecord(
+            uuid=uuid.uuid4().hex,
             measure_time=measure_time,
             site_name=CONF.site_name,
             user_id=user_id,
