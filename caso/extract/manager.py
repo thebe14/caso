@@ -26,6 +26,7 @@ from oslo_config import cfg
 from oslo_log import log
 import six
 
+from caso import keystone_client
 from caso import loading
 
 cli_opts = [
@@ -65,6 +66,7 @@ CONF = cfg.CONF
 
 CONF.register_cli_opts(cli_opts)
 CONF.import_opt("projects", "caso.extract.base")
+CONF.import_opt("caso_tag", "caso.extract.base")
 
 LOG = log.getLogger(__name__)
 
@@ -83,6 +85,20 @@ class Manager(object):
         ]
         self.extractors = extractors
         self.last_run_base = os.path.join(CONF.spooldir, "lastrun")
+
+        self.keystone = self._get_keystone_client()
+
+    @property
+    def projects(self):
+        """Get list of configured projects."""
+        projects = CONF.projects
+        aux = [i.id for i in self.keystone.projects.list(tags=CONF.caso_tag)]
+        return set(projects + aux)
+
+    def _get_keystone_client(self):
+        """Get a Keystone Client to get the projects that we will use."""
+        client = keystone_client.get_client(CONF, system_scope="all")
+        return client
 
     def get_lastrun(self, project):
         """Get lastrun file for a given project."""
@@ -143,7 +159,7 @@ class Manager(object):
             extract_to = now
 
         all_records = []
-        for project in CONF.projects:
+        for project in self.projects:
             LOG.info(f"Extracting records for project '{project}'")
 
             extract_from = CONF.extract_from or self.get_lastrun(project)

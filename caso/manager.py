@@ -78,6 +78,18 @@ class Manager(object):
 
         self.lock_path = CONF.lock_path
 
+    def _load_managers(self):
+        # Load the managers here to have the config options loaded and
+        # available
+        self.extractor_manager = caso.extract.manager.Manager()
+        self.messenger = caso.messenger.Manager()
+
+    def projects(self):
+        """Get the configured projects."""
+        self._load_managers()
+
+        return self.extractor_manager.projects
+
     def run(self):
         """Run the manager.
 
@@ -86,10 +98,7 @@ class Manager(object):
             - Gets all records from the configured extractors
             - Pushes all the records to the messengers
         """
-        # Load the managers here to have the config options loaded and
-        # available
-        self.extractor_manager = caso.extract.manager.Manager()
-        self.messenger = caso.messenger.Manager()
+        self._load_managers()
 
         @lockutils.synchronized(
             "caso_should_not_run_in_parallel", lock_path=self.lock_path, external=True

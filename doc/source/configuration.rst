@@ -66,6 +66,26 @@ that you are applying the correct changes as listed in the following table.
 |             | Modified | ``“identity:get_user”: “rule:admin_or_owner or role:accounting”`` |
 +-------------+----------+-------------------------------------------------------------------+
 
+Selecting projects to get usages
+================================
+
+``cASO`` will extract project usages for those projects that have been explictly marked
+by the operator by either of the ways explained below. The final project list will
+result from the merge of both methods, so thay are not mutually exclusive.
+
+* Tagging the project with the configured ``caso_tag`` in OpenStack Keystone. By default
+  this option is set to ``caso``, so in order to mark a project to get extracted you
+  should use the following command for each of the projects::
+
+    openstack project set --tag caso <project id>
+
+  You can check the list of projects to get usages by using::
+
+    openstack project list --tags caso
+
+* Using the ``projects`` list in the ``[DEFAULT]`` section of your configuration file
+  (see below).
+
 cASO configuration
 ==================
 
@@ -91,7 +111,11 @@ of every option. You should check at least the following options:
   records from. You can use either the project ID or the project name. We
   recommend that you use the project ID, especially if you are using
   domain-based authentication, as otherwise gathering the information might
-  fail.
+  fail. This option, and the usage of ``caso_tag`` below will set up the final
+  project list.
+* ``caso_tag`` (default value: ``caso``), specified the tag to be used filter
+  projects to extract their usage. The projects that are listed with this tag,
+  as well as the ``projects`` list set above will set up the final project list.
 * ``messengers`` (list, default: ``noop``). List of the messengers to publish
   data to. Records will be pushed to all these messengers, in order. Valid
   messengers shipped with cASO are:

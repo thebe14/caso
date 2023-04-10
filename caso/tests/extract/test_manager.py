@@ -39,11 +39,18 @@ class TestCasoManager(base.TestCase):
         self.m_extractor = mock.MagicMock()
         self.m_extractor.return_value.extract.return_value = self.records
         patched.return_value = {"mock": self.m_extractor}
+
+        self.p_keystone = mock.patch(
+            "caso.extract.manager.Manager._get_keystone_client"
+        )
+        self.p_keystone.start()
+
         self.manager = manager.Manager()
 
     def tearDown(self):
         """Run after each test, reset state and environment."""
         self.p_extractors.stop()
+        self.p_keystone.stop()
         self.reset_flags()
 
         super(TestCasoManager, self).tearDown()
