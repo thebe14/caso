@@ -29,19 +29,6 @@ opts = [
     cfg.StrOpt(
         "service_name", default="$site_name", help="Service name within the site"
     ),
-    cfg.ListOpt(
-        "projects",
-        default=[],
-        deprecated_name="tenants",
-        help="List of projects to extract accounting records from. You can "
-        "use this option, or add 'caso' tag to the project in Keystone. "
-        "Please refer to the documentation for more details.",
-    ),
-    cfg.StrOpt(
-        "caso_tag",
-        default="caso",
-        help="Tag used to mark a project in Keystone to be extracted by cASO",
-    ),
     cfg.StrOpt(
         "mapping_file",
         default="/etc/caso/voms.json",

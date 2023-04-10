@@ -30,6 +30,19 @@ from caso import keystone_client
 from caso import loading
 
 cli_opts = [
+    cfg.ListOpt(
+        "projects",
+        default=[],
+        deprecated_name="tenants",
+        help="List of projects to extract accounting records from. You can "
+        "use this option, or add 'caso' tag to the project in Keystone. "
+        "Please refer to the documentation for more details.",
+    ),
+    cfg.StrOpt(
+        "caso_tag",
+        default="caso",
+        help="Tag used to mark a project in Keystone to be extracted by cASO",
+    ),
     cfg.StrOpt(
         "extract-to",
         deprecated_name="extract_to",
@@ -65,8 +78,6 @@ cli_opts = [
 CONF = cfg.CONF
 
 CONF.register_cli_opts(cli_opts)
-CONF.import_opt("projects", "caso.extract.base")
-CONF.import_opt("caso_tag", "caso.extract.base")
 
 LOG = log.getLogger(__name__)
 
